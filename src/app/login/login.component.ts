@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFire, AuthMethods, AuthProviders } from 'angularfire2';
+import * as firebase from 'firebase';
 
 @Component({
   selector: 'app-login',
@@ -45,11 +46,34 @@ export class LoginComponent implements OnInit {
         method: AuthMethods.Popup,
       })
       .then(() => {
+        this.storeUserToDatabase();
         this.router.navigate(['/teams']);
       })
       .catch(error => {
         alert(error);
       })
     ;
+  }
+
+  /**
+   * Stores a user to database if not yet existing.
+   */
+  private storeUserToDatabase(){
+    let firebaseUser = firebase.auth().currentUser;
+    let newUser = {
+      name: firebaseUser.displayName,
+      email: firebaseUser.email
+    };
+
+    let userList = this.angularFire.database.list('/users', {
+      query: {
+        orderByChild: 'name',
+        equalTo: firebaseUser.displayName
+      }
+    }).subscribe(users => {
+      if (users.length === 0){
+        this.angularFire.database.list('/users').push(newUser);
+      }
+    });
   }
 }
