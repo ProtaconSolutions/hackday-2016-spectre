@@ -11,6 +11,7 @@ import * as firebase from 'firebase';
 export class TagsComponent implements OnInit {
   public tags: FirebaseListObservable<any[]>;
   public tag: string = '';
+  public type: string = '';
 
   /**
    * Constructor
@@ -26,6 +27,7 @@ export class TagsComponent implements OnInit {
   public addNewTag() {
     let tagItem = {
       name: this.tag,
+      type: this.type,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP,
     };
