@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { Tag } from "../shared/interfaces/tag";
 import * as firebase from 'firebase';
 
 @Component({
@@ -9,7 +10,7 @@ import * as firebase from 'firebase';
 })
 
 export class TagsComponent implements OnInit {
-  public tags: FirebaseListObservable<any[]>;
+  public tags: FirebaseListObservable<Tag[]>;
   public tag: string = '';
   public type: string = '';
 

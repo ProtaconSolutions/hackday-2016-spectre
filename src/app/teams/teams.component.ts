@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import * as firebase from 'firebase';
+import { Team } from "../shared/interfaces/team";
 
 @Component({
   selector: 'app-teams',
@@ -9,7 +10,7 @@ import * as firebase from 'firebase';
 })
 
 export class TeamsComponent implements OnInit {
-  public teams: FirebaseListObservable<any[]>;
+  public teams: FirebaseListObservable<Team[]>;
   public newTeamName: string = '';
 
   /**

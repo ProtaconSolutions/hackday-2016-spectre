@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import {LocalStorageService} from "ng2-webstorage";
+import {Note} from "../shared/interfaces/note";
 
 @Component({
   selector: 'app-notes',
@@ -9,7 +10,7 @@ import {LocalStorageService} from "ng2-webstorage";
 })
 
 export class NotesComponent implements OnInit {
-  public notes: FirebaseListObservable<any[]>;
+  public notes: FirebaseListObservable<Note[]>;
 
   /**
    * Constructor
