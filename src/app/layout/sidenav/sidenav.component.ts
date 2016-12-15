@@ -41,7 +41,7 @@ export class SidenavComponent implements OnInit {
     this.angularFire.auth.logout();
     this.localStorage.clear();
 
-    this.router.navigate(['/login']);
+    return this.router.navigate(['/login']);
   }
 
   public selectTeam(team) {
