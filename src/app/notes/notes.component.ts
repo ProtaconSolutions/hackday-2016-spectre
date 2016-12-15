@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { LocalStorageService } from 'ng2-webstorage';
+import 'rxjs';
 import {LocalStorageService} from "ng2-webstorage";
 import {Note} from "../shared/interfaces/note";
 

@@ -1,5 +1,6 @@
 import './polyfills.ts';
 
+import 'materialize-css/dist/js/materialize.js';
 import 'materialize-css';
 import 'angular2-materialize'
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
