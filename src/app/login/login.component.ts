@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
       email: firebaseUser.email
     };
 
-    let userList = this.angularFire.database.list('/users', {
+    this.angularFire.database.list('/users', {
       query: {
         orderByChild: 'name',
         equalTo: firebaseUser.displayName
