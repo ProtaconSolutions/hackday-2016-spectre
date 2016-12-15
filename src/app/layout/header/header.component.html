@@ -2,7 +2,10 @@
     <div class="nav-wrapper"
         *ngIf="uid"
     >
-        <a href="/" class="brand-logo">{{team?.name}}</a>
+        <span class="brand-logo">
+            <span *ngIf="team">{{team?.name}}</span>
+            <span *ngIf="!team"><em>Choose team</em></span>
+        </span>
 
         <ul class="right">
             <li>
@@ -20,12 +23,16 @@
             materialize="tabs"
         >
             <li class="tab">
-                <a routerLinkActive="active"
+                <a
+                    [ngClass]="{disabled: !team}"
+                    routerLinkActive="active"
                     routerLink="/notes"
                 >Notes</a>
             </li>
             <li class="tab">
-                <a routerLinkActive="active"
+                <a
+                    [ngClass]="{disabled: !team}"
+                    routerLinkActive="active"
                     routerLink="/retros"
                 >Retros</a>
             </li>

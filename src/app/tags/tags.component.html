@@ -1,28 +1,25 @@
-<p>
-  tags works!
-
-</p>
-
-<ul>
-  <li *ngFor="let tag of tags | async">
-    Name:{{tag.name}} Type:{{tag.type}} <a (click)="removeTag(tag)">remove</a>
-  </li>
-</ul>
-
 <div>
+  <h4>Add new tag</h4>
+
   <form #tagForm="ngForm" (submit)="addNewTag()">
-    <input name="tag" required
+    <input name="tag" required placeholder="Enter tag name"
       [(ngModel)]="tag"
       #tagControl
     />
-    <input name="type" required
-           [(ngModel)]="type"
-           #tagControl
-    />
 
+    <input name="type" required placeholder="Enter type name"
+      [(ngModel)]="type"
+      #tagControl
+    />
 
     <button type="submit"
       [disabled]="tagForm.invalid"
-    >Save</button>
+    >Add tag</button>
   </form>
+
+  <ul>
+    <li *ngFor="let tag of tags | async">
+      Name:{{tag.name}} Type:{{tag.type}} <a (click)="removeTag(tag)">remove</a>
+    </li>
+  </ul>
 </div>
