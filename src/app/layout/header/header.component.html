@@ -1,6 +1,6 @@
-<nav class="nav-extended">
+<nav materialize class="nav-extended light-blue accent-3">
     <div class="nav-wrapper">
-        <a href="/" class="brand-logo">Spectre</a>
+        <a href="/" class="brand-logo">{{team.name}}</a>
 
         <ul class="right">
             <li>
@@ -11,12 +11,16 @@
             </li>
         </ul>
 
-        <ul class="tabs tabs-transparent">
+        <ul materialize="tabs" class="tabs tabs-transparent">
             <li class="tab">
-                <a routerLink="/notes">Notes</a>
+                <a routerLinkActive="active"
+                    routerLink="/notes"
+                >Notes</a>
             </li>
             <li class="tab">
-                <a routerLink="/retros">Retros</a>
+                <a routerLinkActive="active"
+                    routerLink="/retros"
+                >Retros</a>
             </li>
         </ul>
     </div>
