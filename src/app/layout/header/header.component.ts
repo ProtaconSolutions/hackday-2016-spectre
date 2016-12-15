@@ -11,6 +11,7 @@ import { LocalStorageService } from 'ng2-webstorage';
 
 export class HeaderComponent implements OnInit {
   public team: any;
+  public uid: string;
 
   public constructor(
     private angularFire: AngularFire,
@@ -20,17 +21,25 @@ export class HeaderComponent implements OnInit {
 
   public ngOnInit() {
     this.team = this.localStorage.retrieve('team');
+    this.uid = this.localStorage.retrieve('uid');
 
     this.localStorage
       .observe('team')
       .subscribe((value) => {
         this.team = value;
       });
+
+    this.localStorage
+      .observe('uid')
+      .subscribe((value) => {
+        this.uid = value;
+      });
   }
 
   public logout() {
     this.angularFire.auth.logout();
+    this.localStorage.clear();
 
-    this.router.navigate(['/login']);
+    this.router.navigate(['/blank']);
   }
 }

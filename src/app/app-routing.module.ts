@@ -5,7 +5,7 @@ const appRoutes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'login',
+    redirectTo: 'blank',
   },
 ];
 

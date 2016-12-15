@@ -3,7 +3,13 @@
         <div class="col">
             <h2>Spectre</h2>
 
-            <h3>{{username}}</h3>
+            <h3 *ngIf="(angularFire.auth | async)?.uid">
+                <span >{{username}}</span>
+            </h3>
+
+            <a class="waves-effect waves-teal btn-flat white-text"
+                *ngIf="!(angularFire.auth | async)?.uid" (click)="login('Google')"
+            >Login</a>
         </div>
     </div>
 
@@ -20,7 +26,5 @@
         >
             {{team.name}}
         </a>
-
-        <a class="collection-item" (click)="logout()">logout</a>
     </div>
 </div>

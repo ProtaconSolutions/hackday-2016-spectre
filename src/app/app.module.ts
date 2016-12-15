@@ -8,6 +8,7 @@ import { TeamsModule } from './teams/teams.module';
 import { TagsModule } from './tags/tags.module';
 import { LayoutModule } from './layout/layout.module';
 import { RetrosModule } from "./retros/retros.module";
+import { BlankModule } from './blank/blank.module';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { RetrosModule } from "./retros/retros.module";
     AppRoutingModule,
     SharedModule,
     LayoutModule,
+    BlankModule,
     LoginModule,
     TagsModule,
     TeamsModule,
