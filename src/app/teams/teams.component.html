@@ -1,6 +1,8 @@
 <div>
+  <h4>Add new team</h4>
+
   <form #teamForm="ngForm" (submit)="addTeamToDatabase()">
-    <input type="text" name="newTeamName" [(ngModel)]="newTeamName" required />
+    <input type="text" name="newTeamName" [(ngModel)]="newTeamName" required placeholder="Enter team name" />
 
     <button type="submit" [disabled]="teamForm.invalid">Add team</button>
   </form>

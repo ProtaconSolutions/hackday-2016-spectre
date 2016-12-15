@@ -7,3 +7,9 @@ a:not([href]){
   -moz-user-select: none;
   user-select: none
 }
+
+a.disabled {
+  pointer-events: none;
+  cursor: default;
+  opacity: .5;
+}
