@@ -7,6 +7,7 @@ import { LoginModule } from './login/login.module';
 import { TeamsModule } from './teams/teams.module';
 import { TagsModule } from './tags/tags.module';
 import { LayoutModule } from './layout/layout.module';
+import { RetrosModule } from "./retros/retros.module";
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { LayoutModule } from './layout/layout.module';
     LoginModule,
     TagsModule,
     TeamsModule,
+    RetrosModule,
   ],
   bootstrap: [
     AppComponent,
