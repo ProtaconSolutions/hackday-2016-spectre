@@ -1,0 +1,23 @@
+<p>
+  tags works!
+
+</p>
+
+<ul>
+  <li *ngFor="let tag of tags | async">
+    {{tag.name}} <a (click)="removeTag(tag)">remove</a>
+  </li>
+</ul>
+
+<div>
+  <form #tagForm="ngForm" (submit)="addNewTag()">
+    <input name="tag" required
+      [(ngModel)]="tag"
+      #tagControl
+    />
+
+    <button type="submit"
+      [disabled]="tagForm.invalid"
+    >Save</button>
+  </form>
+</div>
