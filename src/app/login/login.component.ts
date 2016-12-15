@@ -46,7 +46,7 @@ export class LoginComponent implements OnInit {
         method: AuthMethods.Popup,
       })
       .then(() => {
-        this.storeUserToDatabase();
+        //this.storeUserToDatabase();
         this.router.navigate(['/teams']);
       })
       .catch(error => {
