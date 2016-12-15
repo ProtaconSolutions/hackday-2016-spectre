@@ -1,11 +1,23 @@
-<header>
-  <router-outlet name="header"></router-outlet>
-</header>
+<div class="col">
+  <article>
+    <div class="row">
+      <div class="col s2" style="padding: 0;">
+        <router-outlet name="sidenav"></router-outlet>
+      </div>
 
-<article>
-  <router-outlet></router-outlet>
-</article>
+      <div class="col s10" style="padding: 0;">
+        <header>
+          <router-outlet name="header"></router-outlet>
+        </header>
 
-<footer>
-  <router-outlet name="footer"></router-outlet>
-</footer>
+        <div class="container">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <router-outlet name="footer"></router-outlet>
+  </footer>
+</div>

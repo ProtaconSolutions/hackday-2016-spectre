@@ -1,0 +1,22 @@
+<div>
+    <div class="foo light-blue accent-3">
+{{username}}
+    </div>
+
+    <ul class="collection with-header">
+        <li *ngIf="(angularFire.auth | async)?.uid" class="collection-header">Teams</li>
+    </ul>
+    <div class="collection"
+         *ngIf="(angularFire.auth | async)?.uid"
+    >
+        <a class="collection-item"
+           *ngFor="let team of teams | async"
+           (click)="selectTeam(team)"
+           [ngClass]="{'active': team == selectedTeam }"
+        >
+            {{team.name}}
+        </a>
+
+        <a class="collection-item" (click)="logout()">logout</a>
+    </div>
+</div>
