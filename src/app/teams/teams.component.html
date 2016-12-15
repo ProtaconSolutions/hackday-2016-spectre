@@ -5,4 +5,10 @@
     <button type="submit" [disabled]="teamForm.invalid">Add team</button>
   </form>
 
+  <ul>
+    <li *ngFor="let team of teams | async">
+      {{team.name}} <a (click)="removeTeam(team)">(Remove)</a>
+    </li>
+  </ul>
+
 </div>

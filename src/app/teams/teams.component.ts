@@ -31,4 +31,8 @@ export class TeamsComponent implements OnInit {
     this.teams.push(teamItem);
     this.newTeamName = '';
   }
+
+  public removeTeam(team){
+    this.teams.remove(team.$key)
+  }
 }
