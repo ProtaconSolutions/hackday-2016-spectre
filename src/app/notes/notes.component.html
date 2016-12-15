@@ -1,0 +1,9 @@
+<p>
+  notes works!
+</p>
+
+<ul>
+  <li *ngFor="let note of notes | async">
+    Note: {{note.text}}
+  </li>
+</ul>

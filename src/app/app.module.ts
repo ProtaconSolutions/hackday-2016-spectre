@@ -7,6 +7,7 @@ import { LoginModule } from './login/login.module';
 import { TeamsModule } from './teams/teams.module';
 import { TagsModule } from './tags/tags.module';
 import { LayoutModule } from './layout/layout.module';
+import { NotesModule } from "./notes/notes.module";
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { LayoutModule } from './layout/layout.module';
     SharedModule,
     LayoutModule,
     LoginModule,
+    NotesModule,
     TagsModule,
     TeamsModule,
   ],
