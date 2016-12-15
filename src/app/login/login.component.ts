@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   public ngOnInit() {
     this.angularFire.auth.subscribe(auth => {
       if (auth && auth.uid) {
-        this.router.navigateByUrl('/about');
+        this.router.navigateByUrl('/teams');
       }
     });
   }
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
         method: AuthMethods.Popup,
       })
       .then(() => {
-        this.router.navigate(['/todos']);
+        this.router.navigate(['/teams']);
       })
       .catch(error => {
         alert(error);

@@ -9,6 +9,7 @@ import { MomentModule } from 'angular2-moment';
 import { Ng2Webstorage } from 'ng2-webstorage';
 
 import { Config } from '../config/config';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @NgModule({
   declarations: [],
@@ -18,6 +19,7 @@ import { Config } from '../config/config';
     FormsModule,
     HttpModule,
     RouterModule,
+    AuthenticationModule.forRoot(),
     AngularFireModule.initializeApp(Config.FIREBASE_CONFIG, Config.FIREBASE_AUTH_CONFIG),
     Ng2Webstorage,
   ],
@@ -28,6 +30,7 @@ import { Config } from '../config/config';
     FormsModule,
     HttpModule,
     RouterModule,
+    AuthenticationModule,
     AngularFireModule,
     MomentModule,
     Ng2Webstorage,
