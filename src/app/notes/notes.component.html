@@ -1,9 +1,14 @@
-<p>
-  notes works!
-</p>
+<h4>Add new note</h4>
+
+<h4>Open notes</h4>
 
 <ul>
   <li *ngFor="let note of notes | async">
-    Note: {{note.text}}
+    Note: {{note.text}}, replies count {{note.notes.length}}
+    <ol *ngIf="note.notes.length">
+      <li *ngFor="let _note of note.notes">
+        {{_note.text}}
+      </li>
+    </ol>
   </li>
 </ul>

@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
-import 'rxjs';
-import {LocalStorageService} from "ng2-webstorage";
-import {Note} from "../shared/interfaces/note";
 
 @Component({
   selector: 'app-notes',
@@ -12,7 +9,7 @@ import {Note} from "../shared/interfaces/note";
 })
 
 export class NotesComponent implements OnInit {
-  public notes: FirebaseListObservable<Note[]>;
+  public notes: any;
 
   /**
    * Constructor
@@ -38,6 +35,18 @@ export class NotesComponent implements OnInit {
 
   private getNotesByTeamKey(teamKey)
   {
-    return this.angularFire.database.list('/notes/' + teamKey);
+    return this.angularFire.database.list('/notes/' + teamKey)
+      .map(results => {
+        let foo = [...results];
+
+        return results
+          .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== ''))
+          .map(note => {
+            note.notes = foo.filter(_note => _note.parentNote === note.$key);
+
+            return note;
+          })
+        ;
+      });
   }
 }
