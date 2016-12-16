@@ -3,8 +3,8 @@
 <form #noteForm="ngForm" (submit)="addNewNote()">
 
   <div *ngFor="let tag of noteTypes | async">
-      <input name="noteType" type="radio" id="tag.name" [(ngModel)]="noteType" [value]="tag.name" />
-      <label for="tag.name">{{tag.name}}</label>
+      <input name="noteType" type="radio" id="{{tag.name}}" [(ngModel)]="noteType" [value]="tag.name" />
+      <label for="{{tag.name}}">{{tag.name}}</label>
   </div>
 
 
