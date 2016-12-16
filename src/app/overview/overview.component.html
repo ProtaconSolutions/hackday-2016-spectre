@@ -1,0 +1,16 @@
+<div>
+
+  <span *ngFor="let tag of tags | async">
+
+    <a (click)="toggle(tag.$key)">{{tag.name}}</a>
+    -
+  </span>
+
+  <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
+    <li *ngFor="let note of foos">
+      <div class="collapsible-header">
+        {{note.text}}
+      </div>
+    </li>
+  </ul>
+</div>

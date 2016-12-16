@@ -10,6 +10,7 @@ import { TagsModule } from './tags/tags.module';
 import { LayoutModule } from './layout/layout.module';
 import { RetrosModule } from "./retros/retros.module";
 import { BlankModule } from './blank/blank.module';
+import { OverviewModule } from './overview/overview.module';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { BlankModule } from './blank/blank.module';
     BlankModule,
     LoginModule,
     NotesModule,
+    OverviewModule,
     TagsModule,
     TeamsModule,
     RetrosModule,
