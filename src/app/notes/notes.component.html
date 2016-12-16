@@ -16,7 +16,12 @@
 <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
   <li *ngFor="let note of notes | async">
     <div class="collapsible-header">
-      <span class="new badge">{{note.notes.length}}</span>
+      <span class="new badge" data-badge-caption="replies">{{note.notes.length}}</span>
+
+      <span class="new tags badge"
+            *ngFor="let tag of note.tags$ | async"
+            [ngClass]="(tag | async)?.type"
+      >{{(tag | async)?.name}}</span>
 
       {{note.text}} <small>{{(note.user$ | async)?.name}}</small>
     </div>
@@ -25,6 +30,12 @@
       <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
         <li *ngFor="let _note of note.notes">
           <div class="collapsible-header">
+
+            <span class="new tags badge"
+              *ngFor="let tag of _note.tags$ | async"
+              [ngClass]="(tag | async)?.type"
+            >{{(tag | async)?.name}}</span>
+
             {{_note.text}} <small>{{(_note.user$ | async)?.name}}</small>
           </div>
         </li>

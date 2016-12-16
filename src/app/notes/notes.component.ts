@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
 import * as firebase from 'firebase';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-notes',
@@ -66,15 +67,21 @@ export class NotesComponent implements OnInit {
         results = results.map(note => {
           note.user$ = this.angularFire.database.object('/users/' + note.user);
 
+          if (note.hasOwnProperty('tags') && note.tags.length > 0) {
+            note.tags$ = Observable.of(note.tags.map(tag => this.angularFire.database.object('/tags/' + tag)));
+          } else {
+            note.tags$ = Observable.of([]);
+          }
+
           return note;
         });
 
-        let foo = [...results];
+        const copyOfResults = [...results];
 
         return results
           .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== ''))
           .map(note => {
-            note.notes = foo.filter(_note => _note.parentNote === note.$key);
+            note.notes = copyOfResults.filter(_note => _note.parentNote === note.$key);
 
             return note;
           })
