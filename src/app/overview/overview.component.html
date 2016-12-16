@@ -1,15 +1,22 @@
-<div>
+<div class="overview">
 
-  <span *ngFor="let tag of tags | async">
-
-    <a (click)="toggle(tag.$key)">{{tag.name}}</a>
-    -
-  </span>
+  <a class=" btn"
+    [ngClass]="{'light-blue accent-3': isEnabled(tag)}"
+    *ngFor="let tag of tags | async"
+    (click)="toggle(tag.$key)"
+  >
+    {{tag.name}}
+  </a>
 
   <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
     <li *ngFor="let note of foos">
       <div class="collapsible-header">
-        {{note.text}}
+        <span class="new tags badge"
+          *ngFor="let tag of note.tags$ | async"
+          [ngClass]="(tag | async)?.type"
+        >{{(tag | async)?.name}}</span>
+
+        {{note.text}} <small>{{(note.user$ | async)?.name}}</small>
       </div>
     </li>
   </ul>

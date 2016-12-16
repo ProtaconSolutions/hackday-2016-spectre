@@ -16,6 +16,7 @@ export class overviewComponent implements OnInit {
   private teamKey: string;
   private uid: string;
   private foos: any;
+  private enabled: any[] = [];
 
   /**
    * Constructor
@@ -33,15 +34,19 @@ export class overviewComponent implements OnInit {
 
   ngOnInit() {
     this.tags = this.angularFire.database.list('/tags');
-
     this.localStorage.store('foos', []);
 
     this.localStorage
       .observe('foos')
       .subscribe((value) => {
-        console.log(value);
+        this.enabled = value ? value : [];
+
         this.getNotes(value);
       });
+  }
+
+  isEnabled(tag) {
+    return this.enabled.indexOf(tag.$key) > -1;
   }
 
   toggle(item) {
@@ -59,15 +64,26 @@ export class overviewComponent implements OnInit {
   private getNotes(value) {
     return this.angularFire.database.list('/notes/' + this.teamKey)
       .map(results => {
-        results
+        this.foos = results
           .filter(note => {
             if (note.hasOwnProperty('tags')) {
-              return note.tags.filter(n => value.indexOf(n) !== -1).length;
+              return note.tags.filter(n => value.indexOf(n) !== -1).length > 0;
             }
-            return (note.hasOwnProperty('tags') && note.tags.indexOf(value[0]) > -1);
+
+            return false;
+          })
+          .map(note => {
+            note.user$ = this.angularFire.database.object('/users/' + note.user);
+
+            if (note.hasOwnProperty('tags') && note.tags.length > 0) {
+              note.tags$ = Observable.of(note.tags.map(tag => this.angularFire.database.object('/tags/' + tag)));
+            } else {
+              note.tags$ = Observable.of([]);
+            }
+
+            return note;
           });
 
-        this.foos = results;
       }).subscribe();
   }
 }
