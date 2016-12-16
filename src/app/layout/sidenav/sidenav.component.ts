@@ -52,7 +52,6 @@ export class SidenavComponent implements OnInit {
       })
       .then(() => {
         this.storeUserToDatabase();
-        this.router.navigate(['/teams']);
       })
       .catch(error => {
         alert(error);
@@ -71,13 +70,14 @@ export class SidenavComponent implements OnInit {
     let firebaseUser = firebase.auth().currentUser;
     let newUser = {
       name: firebaseUser.displayName,
-      email: firebaseUser.email
+      email: firebaseUser.email,
+      uid: firebaseUser.uid,
     };
 
     this.angularFire.database.list('/users', {
       query: {
-        orderByChild: 'name',
-        equalTo: firebaseUser.displayName,
+        orderByChild: 'uid',
+        equalTo: firebaseUser.uid,
         limitToFirst: 1
       }
     })
@@ -86,6 +86,8 @@ export class SidenavComponent implements OnInit {
       if (user.length === 0) {
         this.angularFire.database.list('/users').push(newUser);
       }
+
+      this.router.navigate(['/teams']);
     })
     .subscribe();
   }

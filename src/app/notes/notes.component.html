@@ -18,14 +18,14 @@
     <div class="collapsible-header">
       <span class="new badge">{{note.notes.length}}</span>
 
-      {{note.text}} <small>Käyttäjä</small>
+      {{note.text}} <small>{{(note.user$ | async)?.name}}</small>
     </div>
 
     <div class="collapsible-body">
       <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
         <li *ngFor="let _note of note.notes">
           <div class="collapsible-header">
-            {{_note.text}}
+            {{_note.text}} <small>{{(_note.user$ | async)?.name}}</small>
           </div>
         </li>
       </ul>

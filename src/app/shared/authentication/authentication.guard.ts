@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router, CanActivate } from '@angular/router';
-import { FirebaseAuth, FirebaseAuthState } from 'angularfire2';
+import { FirebaseAuth, FirebaseAuthState, AngularFire } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
 import { Observable } from 'rxjs';
 
@@ -22,6 +22,7 @@ export class AuthenticationGuard implements CanActivate {
    */
   constructor(
     private localStorage: LocalStorageService,
+    private angularFire: AngularFire,
     private auth: FirebaseAuth,
     private router: Router
   ) {}
@@ -37,13 +38,34 @@ export class AuthenticationGuard implements CanActivate {
     return this.auth
       .take(1)
       .map((authState: FirebaseAuthState) => {
-        !!authState ? this.localStorage.store('uid', authState.uid) : this.localStorage.clear('uid');
+        if (!!authState) {
+          this.angularFire.database.list('/users', {
+            query: {
+              orderByChild: 'uid',
+              equalTo: authState.uid,
+              limitToFirst: 1
+            }
+          })
+          .take(1)
+          .do(users => {
+            if (users.length === 1) {
+              this.localStorage.store('uid', users[0].$key);
+            } else {
+              this.angularFire.auth.logout();
+              this.localStorage.clear('uid');
+            }
+          })
+          .subscribe();
+        } else {
+          this.angularFire.auth.logout();
+          this.localStorage.clear('uid');
+        }
 
         return !!authState;
       })
       .do(authenticated => {
         if (!authenticated) {
-          this.router.navigate(['/login']);
+          this.router.navigate(['/blank']);
         }
       })
     ;

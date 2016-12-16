@@ -16,6 +16,7 @@ export class NotesComponent implements OnInit {
 
   private teamKey: string;
   private uid: string;
+  private users: any[];
 
   /**
    * Constructor
@@ -32,7 +33,6 @@ export class NotesComponent implements OnInit {
   }
 
   ngOnInit() {
-    // TODO: Retrieve child-notes (perhaps separately) and link them to the retrieved notes.
     this.notes = this.getNotesByTeamKey(this.localStorage.retrieve('team').$key);
 
     this.localStorage
@@ -63,6 +63,12 @@ export class NotesComponent implements OnInit {
   private getNotesByTeamKey(teamKey) {
     return this.angularFire.database.list('/notes/' + teamKey)
       .map(results => {
+        results = results.map(note => {
+          note.user$ = this.angularFire.database.object('/users/' + note.user);
+
+          return note;
+        });
+
         let foo = [...results];
 
         return results
