@@ -13,3 +13,7 @@ a.disabled {
   cursor: default;
   opacity: .5;
 }
+
+span.badge.new:after {
+  content: "";
+}

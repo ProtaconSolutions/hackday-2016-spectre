@@ -21,7 +21,7 @@
 <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
   <li *ngFor="let note of notes | async">
     <div class="collapsible-header">
-      <span class="new badge" data-badge-caption="replies">{{note.notes.length}}</span>
+      <span class="new tags badge" *ngIf="note.notes.length > 0">Replies {{note.notes.length}}</span>
 
       <span class="new tags badge"
             *ngFor="let tag of note.tags$ | async"
