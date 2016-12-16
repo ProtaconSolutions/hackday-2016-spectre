@@ -14,6 +14,10 @@ export class NotesComponent implements OnInit {
   public notes: any;
   public note: string;
   public note2: string;
+  public noteTypes: any;
+  public noteType: string;
+  public commentTypes: any;
+  public commentType: string;
 
   private teamKey: string;
   private uid: string;
@@ -41,6 +45,20 @@ export class NotesComponent implements OnInit {
       .subscribe((value) => {
         this.notes = this.getNotesByTeamKey(value.$key);
       });
+
+    this.noteTypes = this.angularFire.database.list('/tags', {
+      query: {
+        orderByChild: 'type',
+        equalTo: 'MadSadGlad',
+      }
+    });
+
+    this.commentTypes = this.angularFire.database.list('/tags', {
+      query: {
+        orderByChild: 'type',
+        equalTo: 'noteType',
+      }
+    });
   }
 
   public addNewNote(parent?: string) {

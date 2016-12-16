@@ -1,6 +1,13 @@
 <h4>Add new note</h4>
 
 <form #noteForm="ngForm" (submit)="addNewNote()">
+
+  <div *ngFor="let tag of noteTypes | async">
+      <input name="noteType" type="radio" id="tag.name" [(ngModel)]="noteType" [value]="tag.name" />
+      <label for="tag.name">{{tag.name}}</label>
+  </div>
+
+
   <input name="note" required placeholder="Enter note"
     [(ngModel)]="note"
     #noteControl
@@ -8,7 +15,7 @@
 
   <button type="submit"
     [disabled]="noteForm.invalid"
-  >Add note</button>
+  >Add</button>
 </form>
 
 <h4>Open notes</h4>
@@ -42,6 +49,14 @@
       </ul>
 
       <form #note2Form="ngForm" (submit)="addNewNote(note.$key)">
+        <ul>
+          <li *ngFor="let t of commentTypes | async">{{t.name}}</li>
+        </ul>
+
+        <div *ngFor="let t of commentTypes | async">
+            <input name="commentType" type="radio" id="ct" [value]="t.name" />
+            <label for="ct">{{t.name}}</label>
+        </div>
         <input name="note2" required placeholder="Enter note"
           [(ngModel)]="note2"
           #note2Control
@@ -49,7 +64,7 @@
 
         <button type="submit"
           [disabled]="note2Form.invalid"
-        >Add reply</button>
+        >Add</button>
       </form>
     </div>
   </li>
