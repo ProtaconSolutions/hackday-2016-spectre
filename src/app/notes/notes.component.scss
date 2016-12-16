@@ -1,0 +1,20 @@
+span.badge.new:after {
+  content: " replies";
+}
+
+.collapsible-body {
+  margin: 0;
+  padding: 0;
+  background-color: #e1f5fe;
+
+  .collapsible,
+  form {
+    border: none;
+    margin: 0 0 0 32px;
+  }
+
+  form {
+    background-color: #fff;
+    padding: 0 16px 16px 16px;
+  }
+}

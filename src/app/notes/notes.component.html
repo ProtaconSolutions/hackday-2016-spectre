@@ -1,14 +1,45 @@
 <h4>Add new note</h4>
 
+<form #noteForm="ngForm" (submit)="addNewNote()">
+  <input name="note" required placeholder="Enter note"
+    [(ngModel)]="note"
+    #noteControl
+  />
+
+  <button type="submit"
+    [disabled]="noteForm.invalid"
+  >Add note</button>
+</form>
+
 <h4>Open notes</h4>
 
-<ul>
+<ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
   <li *ngFor="let note of notes | async">
-    Note: {{note.text}}, replies count {{note.notes.length}}
-    <ol *ngIf="note.notes.length">
-      <li *ngFor="let _note of note.notes">
-        {{_note.text}}
-      </li>
-    </ol>
+    <div class="collapsible-header">
+      <span class="new badge">{{note.notes.length}}</span>
+
+      {{note.text}} <small>Käyttäjä</small>
+    </div>
+
+    <div class="collapsible-body">
+      <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
+        <li *ngFor="let _note of note.notes">
+          <div class="collapsible-header">
+            {{_note.text}}
+          </div>
+        </li>
+      </ul>
+
+      <form #note2Form="ngForm" (submit)="addNewNote(note.$key)">
+        <input name="note2" required placeholder="Enter note"
+          [(ngModel)]="note2"
+          #note2Control
+        />
+
+        <button type="submit"
+          [disabled]="note2Form.invalid"
+        >Add reply</button>
+      </form>
+    </div>
   </li>
 </ul>
