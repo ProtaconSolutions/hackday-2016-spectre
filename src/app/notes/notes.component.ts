@@ -69,6 +69,7 @@ export class NotesComponent implements OnInit {
       team: teamKey,
       text: parent ? this.note2 : this.note,
       user: this.uid,
+      tags: [parent ? this.commentType : this.noteType],
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };

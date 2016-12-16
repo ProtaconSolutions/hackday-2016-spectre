@@ -2,7 +2,7 @@
 
 <form #noteForm="ngForm" (submit)="addNewNote()">
   <div *ngFor="let tag of noteTypes | async">
-      <input name="noteType" type="radio" id="{{tag.name}}" [(ngModel)]="noteType" [value]="tag.name" />
+      <input name="noteType" type="radio" id="{{tag.name}}" [(ngModel)]="noteType" [value]="tag.$key" />
       <label for="{{tag.name}}">{{tag.name}}</label>
   </div>
 
@@ -47,13 +47,9 @@
       </ul>
 
       <form #note2Form="ngForm" (submit)="addNewNote(note.$key)">
-        <ul>
-          <li *ngFor="let t of commentTypes | async">{{t.name}}</li>
-        </ul>
-
         <div *ngFor="let t of commentTypes | async">
-            <input name="commentType" type="radio" id="ct" [value]="t.name" />
-            <label for="ct">{{t.name}}</label>
+            <input name="commentType" type="radio" [(ngModel)]="commentType" id="aaa{{t.$key}}" [value]="t.$key" />
+            <label for="aaa{{t.$key}}">{{t.name}}</label>
         </div>
         <input name="note2" required placeholder="Enter note"
           [(ngModel)]="note2"
