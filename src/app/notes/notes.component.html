@@ -64,13 +64,5 @@
   </li>
 </ul>
 
-<ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
-  <li *ngFor="let retro of openRetros | async">
-    {{retro.name}}
-  </li>
-</ul>
-
-<span *ngIf="openRetro">{{openRetro?.$key}} {{openRetro?.name}}</span>
-
 <button [hidden]="this.retroStarted" (click)="startRetrospective()">Start Retrospective</button>
 <button [hidden]="!this.retroStarted" (click)="completeRetrospective(openRetro?.$key)">Complete Retrospective</button>

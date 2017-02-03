@@ -18,7 +18,6 @@ export class NotesComponent implements OnInit {
   public noteType: string;
   public commentTypes: any;
   public commentType: string;
-  public openRetros: any;
   public retroStarted: boolean;
 
   private uid: string;
@@ -125,14 +124,15 @@ export class NotesComponent implements OnInit {
 
   private getOpenRetroByTemKey(teamKey) {
 
-    this.openRetros = this.angularFire.database.list('/retros/'+teamKey).map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt') && retro.updatedAt > 0)));
-    this.openRetros.subscribe(value => {
-      this.retroStarted = value.length > 0;
-      if(this.retroStarted)
-      {
-        this.openRetro = value[0];
-      }
-    });
+    this.angularFire.database.list('/retros/'+teamKey)
+      .map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt') && retro.updatedAt > 0)))
+      .subscribe(value => {
+        this.retroStarted = value.length > 0;
+        if(this.retroStarted)
+        {
+          this.openRetro = value[0];
+        }
+      });
   }
 
   private startRetrospective() {
