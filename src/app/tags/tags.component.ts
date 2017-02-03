@@ -11,6 +11,8 @@ import * as firebase from 'firebase';
 
 export class TagsComponent implements OnInit {
   public tags: FirebaseListObservable<Tag[]>;
+  public selectedTagKey: string = '';
+  public selectedTag: Tag;
   public tag: string = '';
   public type: string = '';
 
@@ -26,17 +28,29 @@ export class TagsComponent implements OnInit {
   }
 
   public addNewTag() {
-    let tagItem = {
+    let newTag = {
       name: this.tag,
       type: this.type,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
-    this.tags.push(tagItem);
+    this.tags.push(newTag);
+
+    // Clear selection.
     this.tag = '';
+    this.type = '';
   }
 
+  // TODO: Add editing, see example: https://jsfiddle.net/jaredwilli/QFZmn/
+  /*
+  public editTag(tag) {
+    this.selectedTagKey = tag.$key;
+    this.selectedTag = tag;
+    this.tag = tag.name;
+    this.type = tag.type;
+  }
+*/
   public removeTag(tag) {
     this.tags.remove(tag.$key);
   }
