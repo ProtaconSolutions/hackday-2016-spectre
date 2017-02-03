@@ -18,6 +18,8 @@ export class NotesComponent implements OnInit {
   public noteType: string;
   public commentTypes: any;
   public commentType: string;
+  public openRetros: any;
+  public retroStarted: boolean;
 
   private teamKey: string;
   private uid: string;
@@ -46,6 +48,7 @@ export class NotesComponent implements OnInit {
         this.notes = this.getNotesByTeamKey(value.$key);
       });
 
+    // get note types e.g. Mad/Sad/Glad
     this.noteTypes = this.angularFire.database.list('/tags', {
       query: {
         orderByChild: 'type',
@@ -53,29 +56,40 @@ export class NotesComponent implements OnInit {
       }
     });
 
+    // Note is 'first level' item and comments are sub-items of note
+    // get comment types e.g. Comment/Decision/ActionPoint
     this.commentTypes = this.angularFire.database.list('/tags', {
       query: {
         orderByChild: 'type',
         equalTo: 'noteType',
       }
     });
+
+    this.openRetros = this.angularFire.database.list('/retros/'+this.teamKey).map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt'))));
+    this.openRetros.subscribe(x => this.retroStarted = x.length > 0);
   }
 
   public addNewNote(parent?: string) {
     const teamKey = this.localStorage.retrieve('team').$key;
 
+    // Resolve comment type. Use 'Comment' as default.
+    // 'Decisions' and 'Action Points' are allowed only when there is 'open' retrospective
+    let commentType = this.commentType ? this.commentType : 'Comment';
+
+    // create entity
     let note = {
       parentNote: parent ? parent : '',
       team: teamKey,
       text: parent ? this.note2 : this.note,
       user: this.uid,
-      tags: [parent ? this.commentType : this.noteType],
+      tags: [parent ? commentType : this.noteType],
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
     this.angularFire.database.list('/notes/' + teamKey).push(note);
 
+    // clear inputs
     this.note = '';
     this.note2 = '';
   }
@@ -97,6 +111,8 @@ export class NotesComponent implements OnInit {
 
         const copyOfResults = [...results];
 
+        // re-organize notes so that list contains only notes (entities without parent)
+        // and add 'comments'(entities with parent) as sub-notes
         return results
           .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== ''))
           .map(note => {
@@ -106,5 +122,12 @@ export class NotesComponent implements OnInit {
           })
         ;
       });
+  }
+
+  private startRetrospective() {
+  }
+
+  private completeRetrospective() {
+
   }
 }

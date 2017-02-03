@@ -47,7 +47,7 @@
       </ul>
 
       <form #note2Form="ngForm" (submit)="addNewNote(note.$key)">
-        <div *ngFor="let t of commentTypes | async">
+        <div [hidden]="!this.retroStarted" *ngFor="let t of commentTypes | async">
             <input name="commentType" type="radio" [(ngModel)]="commentType" id="aaa{{t.$key}}" [value]="t.$key" />
             <label for="aaa{{t.$key}}">{{t.name}}</label>
         </div>
@@ -63,3 +63,12 @@
     </div>
   </li>
 </ul>
+
+<ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
+  <li *ngFor="let retro of openRetros | async">
+    {{retro.name}}
+  </li>
+</ul>
+
+<button [hidden]="this.retroStarted" (click)="startRetrospective()">Start Retrospective</button>
+<button [hidden]="!this.retroStarted" (click)="completeRetrospective()">Complete Retrospective</button>
