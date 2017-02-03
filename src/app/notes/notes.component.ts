@@ -18,10 +18,11 @@ export class NotesComponent implements OnInit {
   public noteType: string;
   public commentTypes: any;
   public commentType: string;
+  public retroStarted: boolean;
 
-  private teamKey: string;
   private uid: string;
   private users: any[];
+  private openRetro: any;
 
   /**
    * Constructor
@@ -33,49 +34,60 @@ export class NotesComponent implements OnInit {
     private angularFire: AngularFire,
     private localStorage: LocalStorageService
   ) {
-    this.teamKey = localStorage.retrieve('team').$key;
     this.uid = localStorage.retrieve('uid');
   }
 
   ngOnInit() {
-    this.notes = this.getNotesByTeamKey(this.localStorage.retrieve('team').$key);
+    const teamKey = this.localStorage.retrieve('team').$key;
+    this.notes = this.getNotesByTeamKey(teamKey);
+    this.getOpenRetroByTemKey(teamKey);
 
     this.localStorage
       .observe('team')
-      .subscribe((value) => {
-        this.notes = this.getNotesByTeamKey(value.$key);
+      .subscribe((team) => {
+        this.notes = this.getNotesByTeamKey(team.$key);
+        this.getOpenRetroByTemKey(team.$key);
       });
 
-    this.noteTypes = this.angularFire.database.list('/tags', {
-      query: {
-        orderByChild: 'type',
-        equalTo: 'MadSadGlad',
-      }
-    });
+      // get note types e.g. Mad/Sad/Glad
+      this.noteTypes = this.angularFire.database.list('/tags', {
+        query: {
+          orderByChild: 'type',
+          equalTo: 'MadSadGlad',
+        }
+      });
 
-    this.commentTypes = this.angularFire.database.list('/tags', {
-      query: {
-        orderByChild: 'type',
-        equalTo: 'noteType',
-      }
-    });
+      // Note is 'first level' item and comments are sub-items of note
+      // get comment types e.g. Comment/Decision/ActionPoint
+      this.commentTypes = this.angularFire.database.list('/tags', {
+        query: {
+          orderByChild: 'type',
+          equalTo: 'noteType',
+        }
+      });
   }
 
   public addNewNote(parent?: string) {
     const teamKey = this.localStorage.retrieve('team').$key;
 
+    // Resolve comment type. Use 'Comment' as default.
+    // 'Decisions' and 'Action Points' are allowed only when there is 'open' retrospective
+    let commentType = this.commentType ? this.commentType : 'Comment';
+
+    // create entity
     let note = {
       parentNote: parent ? parent : '',
       team: teamKey,
       text: parent ? this.note2 : this.note,
       user: this.uid,
-      tags: [parent ? this.commentType : this.noteType],
+      tags: [parent ? commentType : this.noteType],
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
     this.angularFire.database.list('/notes/' + teamKey).push(note);
 
+    // clear inputs
     this.note = '';
     this.note2 = '';
   }
@@ -97,6 +109,8 @@ export class NotesComponent implements OnInit {
 
         const copyOfResults = [...results];
 
+        // re-organize notes so that list contains only notes (entities without parent)
+        // and add 'comments'(entities with parent) as sub-notes
         return results
           .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== ''))
           .map(note => {
@@ -106,5 +120,45 @@ export class NotesComponent implements OnInit {
           })
         ;
       });
+  }
+
+  private getOpenRetroByTemKey(teamKey) {
+
+    this.angularFire.database.list('/retros/'+teamKey)
+      .map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt') && retro.updatedAt > 0)))
+      .subscribe(value => {
+        this.retroStarted = value.length > 0;
+        if(this.retroStarted)
+        {
+          this.openRetro = value[0];
+        }
+      });
+  }
+
+  private startRetrospective() {
+    const teamKey = this.localStorage.retrieve('team').$key;
+
+    let retro = {
+      name: 'Sprint retro',
+      team: teamKey,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      updatedAt: 0
+    }
+
+    this.angularFire.database.list('/retros/' + teamKey).push(retro);
+  }
+
+  private completeRetrospective(retroKey) {
+    const teamKey = this.localStorage.retrieve('team').$key;
+
+    let retro = {
+      name: this.openRetro.name,
+      team: this.openRetro.team,
+      createdAt: this.openRetro.createdAt,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
+    }
+
+    this.angularFire.database.list('/retros/' + teamKey).update(retroKey, retro);
+
   }
 }
