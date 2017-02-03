@@ -1,15 +1,15 @@
 <div class="overview">
 
   <a class=" btn"
-    [ngClass]="{'light-blue accent-3': isEnabled(tag)}"
+    [ngClass]="{'light-blue accent-3': isFilterTagActive(tag)}"
     *ngFor="let tag of tags | async"
-    (click)="toggle(tag.$key)"
+    (click)="toggleTagFilter(tag.$key)"
   >
     {{tag.name}}
   </a>
 
   <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
-    <li *ngFor="let note of foos">
+    <li *ngFor="let note of filterTags">
       <div class="collapsible-header">
         <span class="new tags badge"
           *ngFor="let tag of note.tags$ | async"
