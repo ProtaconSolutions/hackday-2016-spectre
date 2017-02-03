@@ -146,7 +146,6 @@ export class NotesComponent implements OnInit {
     }
 
     this.angularFire.database.list('/retros/' + teamKey).push(retro);
-    //this.retroStarted = true;
   }
 
   private completeRetrospective(retroKey) {
