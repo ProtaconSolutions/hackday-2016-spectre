@@ -21,9 +21,9 @@ export class NotesComponent implements OnInit {
   public openRetros: any;
   public retroStarted: boolean;
 
-  private teamKey: string;
   private uid: string;
   private users: any[];
+  private openRetro: any;
 
   /**
    * Constructor
@@ -35,38 +35,37 @@ export class NotesComponent implements OnInit {
     private angularFire: AngularFire,
     private localStorage: LocalStorageService
   ) {
-    this.teamKey = localStorage.retrieve('team').$key;
     this.uid = localStorage.retrieve('uid');
   }
 
   ngOnInit() {
-    this.notes = this.getNotesByTeamKey(this.localStorage.retrieve('team').$key);
+    const teamKey = this.localStorage.retrieve('team').$key;
+    this.notes = this.getNotesByTeamKey(teamKey);
+    this.getOpenRetroByTemKey(teamKey);
 
     this.localStorage
       .observe('team')
-      .subscribe((value) => {
-        this.notes = this.getNotesByTeamKey(value.$key);
+      .subscribe((team) => {
+        this.notes = this.getNotesByTeamKey(team.$key);
+        this.getOpenRetroByTemKey(team.$key);
       });
 
-    // get note types e.g. Mad/Sad/Glad
-    this.noteTypes = this.angularFire.database.list('/tags', {
-      query: {
-        orderByChild: 'type',
-        equalTo: 'MadSadGlad',
-      }
-    });
+      // get note types e.g. Mad/Sad/Glad
+      this.noteTypes = this.angularFire.database.list('/tags', {
+        query: {
+          orderByChild: 'type',
+          equalTo: 'MadSadGlad',
+        }
+      });
 
-    // Note is 'first level' item and comments are sub-items of note
-    // get comment types e.g. Comment/Decision/ActionPoint
-    this.commentTypes = this.angularFire.database.list('/tags', {
-      query: {
-        orderByChild: 'type',
-        equalTo: 'noteType',
-      }
-    });
-
-    this.openRetros = this.angularFire.database.list('/retros/'+this.teamKey).map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt'))));
-    this.openRetros.subscribe(x => this.retroStarted = x.length > 0);
+      // Note is 'first level' item and comments are sub-items of note
+      // get comment types e.g. Comment/Decision/ActionPoint
+      this.commentTypes = this.angularFire.database.list('/tags', {
+        query: {
+          orderByChild: 'type',
+          equalTo: 'noteType',
+        }
+      });
   }
 
   public addNewNote(parent?: string) {
@@ -124,10 +123,43 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  private startRetrospective() {
+  private getOpenRetroByTemKey(teamKey) {
+
+    this.openRetros = this.angularFire.database.list('/retros/'+teamKey).map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt') && retro.updatedAt > 0)));
+    this.openRetros.subscribe(value => {
+      this.retroStarted = value.length > 0;
+      if(this.retroStarted)
+      {
+        this.openRetro = value[0];
+      }
+    });
   }
 
-  private completeRetrospective() {
+  private startRetrospective() {
+    const teamKey = this.localStorage.retrieve('team').$key;
+
+    let retro = {
+      name: 'Sprint retro',
+      team: teamKey,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      updatedAt: 0
+    }
+
+    this.angularFire.database.list('/retros/' + teamKey).push(retro);
+    //this.retroStarted = true;
+  }
+
+  private completeRetrospective(retroKey) {
+    const teamKey = this.localStorage.retrieve('team').$key;
+
+    let retro = {
+      name: this.openRetro.name,
+      team: this.openRetro.team,
+      createdAt: this.openRetro.createdAt,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
+    }
+
+    this.angularFire.database.list('/retros/' + teamKey).update(retroKey, retro);
 
   }
 }

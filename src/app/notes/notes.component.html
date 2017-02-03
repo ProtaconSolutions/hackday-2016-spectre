@@ -70,5 +70,7 @@
   </li>
 </ul>
 
+<span *ngIf="openRetro">{{openRetro?.$key}} {{openRetro?.name}}</span>
+
 <button [hidden]="this.retroStarted" (click)="startRetrospective()">Start Retrospective</button>
-<button [hidden]="!this.retroStarted" (click)="completeRetrospective()">Complete Retrospective</button>
+<button [hidden]="!this.retroStarted" (click)="completeRetrospective(openRetro?.$key)">Complete Retrospective</button>
