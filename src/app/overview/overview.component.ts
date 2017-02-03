@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
-import * as firebase from 'firebase';
 import { Observable } from 'rxjs';
 import { Tag } from '../shared/interfaces/tag';
 
@@ -15,8 +14,8 @@ export class overviewComponent implements OnInit {
   public tags: FirebaseListObservable<Tag[]>;
   private teamKey: string;
   private uid: string;
-  private foos: any;
-  private enabled: any[] = [];
+  private filterTags: any;
+  private activeTags: any[] = [];
 
   /**
    * Constructor
@@ -33,41 +32,70 @@ export class overviewComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tags = this.angularFire.database.list('/tags');
-    this.localStorage.store('foos', []);
-
     this.localStorage
-      .observe('foos')
-      .subscribe((value) => {
-        this.enabled = value ? value : [];
+      .observe('team')
+      .subscribe((team) => {
+        // Update team key if team was changed.
+        this.teamKey = team.$key;
 
-        this.getNotes(value);
+        // Update notes in view for the active tags.
+        this.loadNotesForActiveTags(this.activeTags);
+      });
+
+    // Load the tags from database.
+    this.tags = this.angularFire.database.list('/tags');
+
+    // Store filter tags to be shown on the page.
+    // These tags are used to filter the notes that are shown on the page.
+    this.localStorage.store('filterTags', []);
+
+    // Load the notes to be shown on the page by the selected filter tags.
+    this.localStorage
+      .observe('filterTags')
+      .subscribe((filterTags) => {
+        this.activeTags = filterTags ? filterTags : [];
+
+        this.loadNotesForActiveTags(this.activeTags);
       });
   }
 
-  isEnabled(tag) {
-    return this.enabled.indexOf(tag.$key) > -1;
+  /**
+   * Returns true if the specified tag is active.
+   *
+   * @param tag The filter tag to check if it is an active filter tag.
+   * @returns {boolean} True if the tag is an active filter.
+   */
+  isFilterTagActive(tag) {
+    return this.activeTags.indexOf(tag.$key) > -1;
   }
 
-  toggle(item) {
-    let items = this.localStorage.retrieve('foos');
+  /**
+   * Toggles the filter tag to be active or inactive, depending on its current state.
+   *
+   * @param tagKey The tag key.
+   */
+  toggleTagFilter(tagKey) {
+    let filterTags = this.localStorage.retrieve('filterTags');
 
-    if (items.indexOf(item) === -1) {
-      items.push(item);
+    if (filterTags.indexOf(tagKey) === -1) {
+      // The tag was not found in the filter tags. => Add it as one of the active filters.
+      filterTags.push(tagKey);
     } else {
-      items.splice(items.indexOf(item), 1);
+      // The tag was found in the filter tags. => Remove one filter at the index the filter tag is found.
+      filterTags.splice(filterTags.indexOf(tagKey), 1);
     }
 
-    this.localStorage.store('foos', items);
+    // Updates the filter tags with the change.
+    this.localStorage.store('filterTags', filterTags);
   }
 
-  private getNotes(value) {
+  private loadNotesForActiveTags(activeTags) {
     return this.angularFire.database.list('/notes/' + this.teamKey)
-      .map(results => {
-        this.foos = results
+      .map(notes => {
+        this.filterTags = notes
           .filter(note => {
             if (note.hasOwnProperty('tags')) {
-              return note.tags.filter(n => value.indexOf(n) !== -1).length > 0;
+              return note.tags.filter(noteTag => activeTags.indexOf(noteTag) !== -1).length > 0;
             }
 
             return false;
