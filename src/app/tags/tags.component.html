@@ -17,9 +17,18 @@
     >Add tag</button>
   </form>
 
-  <ul>
-    <li *ngFor="let tag of tags | async">
-      Name:{{tag.name}} Type:{{tag.type}} <a (click)="removeTag(tag)">remove</a>
-    </li>
-  </ul>
+  <table materialize="collapsible" class="collapsible">
+    <div class="collapsible-header">
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th></th>
+      </tr>
+      <tr *ngFor="let tag of tags | async">
+        <td>{{tag.name}}</td>
+        <td>{{tag.type}}</td>
+        <td><a (click)="removeTag(tag)">remove</a></td>
+      </tr>
+    </div>
+  </table>
 </div>
