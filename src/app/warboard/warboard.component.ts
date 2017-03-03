@@ -35,33 +35,7 @@ export class WarboardComponent implements OnInit {
   }
 
   private getOpenActionPointsByTeamKey(teamKey) {
-    return this.angularFire.database.list('/notes/' + teamKey)
-      .map(results => {
-        results = results.map(note => {
-
-          if (note.hasOwnProperty('tags') && note.tags.length > 0) {
-            note.tags$ = Observable.of(note.tags.map(tag => this.angularFire.database.object('/tags/' + tag)));
-          } else {
-            note.tags$ = Observable.of([]);
-          }
-
-          return note;
-        });
-
-        const copyOfResults = [...results];
-
-        // re-organize notes so that list contains only notes (entities without parent)
-        // and add 'comments'(entities with parent) as sub-notes
-        // keep only notes not assigned to retrospective
-        return results
-          .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== '') && (!note.hasOwnProperty('retro') || note.retro === ''))
-          .map(note => {
-            note.notes = copyOfResults.filter(_note => _note.parentNote === note.$key);
-
-            return note;
-          })
-          ;
-      });
+    return null;
   }
 
 }
