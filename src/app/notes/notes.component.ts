@@ -19,6 +19,7 @@ export class NotesComponent implements OnInit {
   public commentTypes: any;
   public commentType: string;
   public retroStarted: boolean;
+  public commentTypeKey: string;
 
   private uid: string;
   private users: any[];
@@ -39,13 +40,13 @@ export class NotesComponent implements OnInit {
 
   ngOnInit() {
     const teamKey = this.localStorage.retrieve('team').$key;
-    this.notes = this.getNotesByTeamKey(teamKey);
+    this.notes = this.getOpenNotesByTeamKey(teamKey);
     this.getOpenRetroByTemKey(teamKey);
 
     this.localStorage
       .observe('team')
       .subscribe((team) => {
-        this.notes = this.getNotesByTeamKey(team.$key);
+        this.notes = this.getOpenNotesByTeamKey(team.$key);
         this.getOpenRetroByTemKey(team.$key);
       });
 
@@ -65,6 +66,14 @@ export class NotesComponent implements OnInit {
           equalTo: 'noteType',
         }
       });
+
+      this.angularFire.database.list('tags', {
+        query: {
+          orderByChild: 'type',
+          equalTo: 'noteType',
+        }
+      }).map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Comment'))
+        .subscribe(value => {this.commentTypeKey = value[0].$key; });
   }
 
   public addNewNote(parent?: string) {
@@ -72,7 +81,7 @@ export class NotesComponent implements OnInit {
 
     // Resolve comment type. Use 'Comment' as default.
     // 'Decisions' and 'Action Points' are allowed only when there is 'open' retrospective
-    let commentType = this.commentType ? this.commentType : 'Comment';
+    let commentType = this.commentType ? this.commentType : this.commentTypeKey;
 
     // create entity
     let note = {
@@ -80,6 +89,7 @@ export class NotesComponent implements OnInit {
       team: teamKey,
       text: parent ? this.note2 : this.note,
       user: this.uid,
+      retro: '',
       tags: [parent ? commentType : this.noteType],
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
@@ -92,7 +102,7 @@ export class NotesComponent implements OnInit {
     this.note2 = '';
   }
 
-  private getNotesByTeamKey(teamKey) {
+  private getOpenNotesByTeamKey(teamKey) {
     return this.angularFire.database.list('/notes/' + teamKey)
       .map(results => {
         results = results.map(note => {
@@ -143,7 +153,7 @@ export class NotesComponent implements OnInit {
       team: teamKey,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: 0
-    }
+    };
 
     this.angularFire.database.list('/retros/' + teamKey).push(retro);
   }
@@ -156,9 +166,8 @@ export class NotesComponent implements OnInit {
       team: this.openRetro.team,
       createdAt: this.openRetro.createdAt,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
-    }
+    };
 
     this.angularFire.database.list('/retros/' + teamKey).update(retroKey, retro);
-
   }
 }
