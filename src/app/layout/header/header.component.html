@@ -22,6 +22,13 @@
         <ul class="tabs tabs-transparent"
             materialize="tabs"
         >
+          <li class="tab">
+            <a
+              [ngClass]="{disabled: !team}"
+              routerLinkActive="active"
+              routerLink="/warboard"
+            >Warboard</a>
+          </li>
             <li class="tab">
                 <a
                     [ngClass]="{disabled: !team}"

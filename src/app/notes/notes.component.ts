@@ -159,7 +159,7 @@ export class NotesComponent implements OnInit {
     this.angularFire.database.list('/retros/' + teamKey).push(retro);
   }
 
-  private completeRetrospective(retroKey) {
+  private completeRetrospective(retroKey, notes) {
     const teamKey = this.localStorage.retrieve('team').$key;
 
     this.linkOpenNotesToRetro(retroKey);
@@ -179,9 +179,15 @@ export class NotesComponent implements OnInit {
 
     let noteList = this.angularFire.database.list('/notes/' + teamKey);
 
-    this.notes.subscribe(items => items.forEach((item) => {
+    var subscription = this.notes.subscribe(items => items.forEach((item) => {
       noteList.update(item.$key, {retro: retroKey});
+
+      item.notes.forEach((child) => {
+        noteList.update(child.$key, {retro: retroKey});
+      })
     }));
+
+    subscription.unsubscribe();
   }
 
 }
