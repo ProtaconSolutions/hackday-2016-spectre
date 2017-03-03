@@ -1,9 +1,23 @@
-<p>
-  retros works!
-</p>
-
 <ul>
   <li *ngFor="let retro of retros | async">
     Name:{{retro.name}} Date: {{retro.createdAt}}
+  </li>
+</ul>
+
+<ul>
+  <li *ngFor="let note of madNotes">
+    {{note.text}}
+  </li>
+</ul>
+
+<ul>
+  <li *ngFor="let note of sadNotes">
+    {{note.text}}
+  </li>
+</ul>
+
+<ul>
+  <li *ngFor="let note of gladNotes">
+    {{note.text}}
   </li>
 </ul>
