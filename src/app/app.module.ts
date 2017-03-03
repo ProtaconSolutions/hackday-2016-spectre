@@ -11,6 +11,7 @@ import { LayoutModule } from './layout/layout.module';
 import { RetrosModule } from "./retros/retros.module";
 import { BlankModule } from './blank/blank.module';
 import { OverviewModule } from './overview/overview.module';
+import {WarboardModule} from "./warboard/warboard.module";
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { OverviewModule } from './overview/overview.module';
     TagsModule,
     TeamsModule,
     RetrosModule,
+    WarboardModule,
   ],
   bootstrap: [
     AppComponent,
