@@ -121,8 +121,9 @@ export class NotesComponent implements OnInit {
 
         // re-organize notes so that list contains only notes (entities without parent)
         // and add 'comments'(entities with parent) as sub-notes
+        // keep only notes not assigned to retrospective
         return results
-          .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== ''))
+          .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== '') && (!note.hasOwnProperty('retro') || note.retro === ''))
           .map(note => {
             note.notes = copyOfResults.filter(_note => _note.parentNote === note.$key);
 
@@ -161,6 +162,8 @@ export class NotesComponent implements OnInit {
   private completeRetrospective(retroKey) {
     const teamKey = this.localStorage.retrieve('team').$key;
 
+    this.linkOpenNotesToRetro(retroKey);
+
     let retro = {
       name: this.openRetro.name,
       team: this.openRetro.team,
@@ -170,4 +173,15 @@ export class NotesComponent implements OnInit {
 
     this.angularFire.database.list('/retros/' + teamKey).update(retroKey, retro);
   }
+
+  private linkOpenNotesToRetro(retroKey){
+    const teamKey = this.localStorage.retrieve('team').$key;
+
+    let noteList = this.angularFire.database.list('/notes/' + teamKey);
+
+    this.notes.subscribe(items => items.forEach((item) => {
+      noteList.update(item.$key, {retro: retroKey});
+    }));
+  }
+
 }
