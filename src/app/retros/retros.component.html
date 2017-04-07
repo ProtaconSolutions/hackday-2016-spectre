@@ -1,5 +1,11 @@
-<ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
-  <li *ngFor="let retro of retros | async">
+<ng-template #loading>
+  Loading...
+</ng-template>
+
+<ul materialize="collapsible" class="collapsible" data-collapsible="accordion"
+  *ngIf="retros$ | async; else loading; let retros"
+>
+  <li *ngFor="let retro of retros">
     <div class="collapsible-header" fxLayout="row" fxLayoutAlign="space-between center">
       <div fxLayout="row" fxLayoutAlign="start center">
         <strong>{{ retro.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm' }}</strong>
@@ -16,34 +22,28 @@
 
     <div class="collapsible-body">
       <strong>Mad</strong>
-      <ul>
-        <li *ngFor="let note of getNotes('Mad', retro)">
-          {{ note.text }}
-        </li>
+      <ul *ngIf="getNotes('Mad', retro) as notes">
+        <li *ngFor="let note of notes"> {{ note.text }}</li>
 
-        <li *ngIf="getNotes('Mad', retro).length === 0">
+        <li *ngIf="notes.length === 0">
           <em>none</em>
         </li>
       </ul>
 
       <strong>Sad</strong>
-      <ul>
-        <li *ngFor="let note of getNotes('Sad', retro)">
-          {{ note.text }}
-        </li>
+      <ul *ngIf="getNotes('Sad', retro) as notes">
+        <li *ngFor="let note of notes"> {{ note.text }}</li>
 
-        <li *ngIf="getNotes('Sad', retro).length === 0">
+        <li *ngIf="notes.length === 0">
           <em>none</em>
         </li>
       </ul>
 
       <strong>Glad</strong>
-      <ul>
-        <li *ngFor="let note of getNotes('Glad', retro)">
-          {{ note.text }}
-        </li>
+      <ul *ngIf="getNotes('Glad', retro) as notes">
+        <li *ngFor="let note of notes"> {{ note.text }}</li>
 
-        <li *ngIf="getNotes('Glad', retro).length === 0">
+        <li *ngIf="notes.length === 0">
           <em>none</em>
         </li>
       </ul>
