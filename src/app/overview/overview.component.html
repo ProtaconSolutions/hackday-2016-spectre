@@ -1,23 +1,36 @@
-<div class="overview">
+<div class="overview" fxLayout="column">
+  <div fxLayout="row">
+    <a class=" btn"
+      [ngClass]="{'light-blue accent-3': isFilterTagActive(tag)}"
+      *ngFor="let tag of tags$ | async"
+      (click)="toggleTagFilter(tag.$key)"
+    >
+      {{tag.name}}
+    </a>
+  </div>
 
-  <a class=" btn"
-    [ngClass]="{'light-blue accent-3': isFilterTagActive(tag)}"
-    *ngFor="let tag of tags | async"
-    (click)="toggleTagFilter(tag.$key)"
-  >
-    {{tag.name}}
-  </a>
+  <ng-template #loading>
+    Loading...
+  </ng-template>
 
-  <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
-    <li *ngFor="let note of filterTags">
-      <div class="collapsible-header">
-        <span class="new tags badge"
-          *ngFor="let tag of note.tags$ | async"
-          [ngClass]="(tag | async)?.type"
-        >{{(tag | async)?.name}}</span>
+  <div *ngIf="notes$ | async; else loading; let notes">
+    <ul materialize="collapsible" class="collapsible" data-collapsible="accordion"
+      *ngIf="notes.length"
+    >
+      <li *ngFor="let note of notes">
+        <div class="collapsible-header">
+          <span class="new tags badge"
+            *ngFor="let tag of note.tags$ | async"
+            [ngClass]="(tag | async)?.type"
+          >{{(tag | async)?.name}}</span>
 
-        {{note.text}} <small>{{(note.user$ | async)?.name}}</small>
-      </div>
-    </li>
-  </ul>
+          {{note.text}} <small>{{(note.user$ | async)?.name}}</small>
+        </div>
+      </li>
+    </ul>
+
+    <div *ngIf="!notes.length">
+      <em><strong>^</strong> Please select some tags <strong>^</strong></em>
+    </div>
+  </div>
 </div>

@@ -3,7 +3,8 @@ import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
 import { Observable } from 'rxjs/Observable';
 
-import { Tag } from '../shared/models/';
+import { Note, Tag, Team } from '../shared/models/';
+import { TeamService } from '../shared/services/';
 
 @Component({
   selector: 'app-overview',
@@ -12,43 +13,48 @@ import { Tag } from '../shared/models/';
 })
 
 export class OverviewComponent implements OnInit {
-  public tags: FirebaseListObservable<Tag[]>;
+  public tags$: FirebaseListObservable<Tag[]>;
+  public notes$: Observable<Array<Note>>;
+
   private teamKey: string;
-  private uid: string;
-  private filterTags: any;
-  private activeTags: any[] = [];
+  private activeTags: Array<Tag> = [];
 
   /**
-   * Constructor
+   * Constructor of the class.
    *
-   * @param {AngularFire} angularFire
+   * @param {AngularFire}         angularFire
    * @param {LocalStorageService} localStorage
+   * @param {TeamService}         teamService
    */
-  constructor(
+  public constructor(
     private angularFire: AngularFire,
-    private localStorage: LocalStorageService
-  ) {
-    this.teamKey = localStorage.retrieve('team').$key;
-    this.uid = localStorage.retrieve('uid');
-  }
+    private localStorage: LocalStorageService,
+    private teamService: TeamService
+  ) { }
 
-  ngOnInit() {
-    this.localStorage
-      .observe('team')
-      .subscribe((team) => {
-        // Update team key if team was changed.
-        this.teamKey = team.$key;
-
-        // Update notes in view for the active tags.
-        this.loadNotesForActiveTags(this.activeTags);
-      });
+  /**
+   * On init lifecycle hook, in here we want to do following:
+   *  1) subscribe to team changes
+   *    1.1) when ever team changes we want to fetch notes again
+   *  2) subscribe to filter tags changes (these are what use can select from GUI)
+   *    2.1) when ever these are changed we want to fetch notes again
+   */
+  public ngOnInit(): void {
+    /**
+     * Store filter tags to be shown on the page.
+     * These tags are used to filter the notes that are shown on the page.
+     */
+    this.localStorage.store('filterTags', []);
 
     // Load the tags from database.
-    this.tags = this.angularFire.database.list('/tags');
+    this.tags$ = this.angularFire.database.list('/tags');
 
-    // Store filter tags to be shown on the page.
-    // These tags are used to filter the notes that are shown on the page.
-    this.localStorage.store('filterTags', []);
+    this.teamService.team$
+      .subscribe((team: Team) => {
+        this.teamKey = team.$key;
+
+        this.notes$ = this.fetchNotes(this.activeTags);
+      });
 
     // Load the notes to be shown on the page by the selected filter tags.
     this.localStorage
@@ -56,7 +62,7 @@ export class OverviewComponent implements OnInit {
       .subscribe((filterTags) => {
         this.activeTags = filterTags ? filterTags : [];
 
-        this.loadNotesForActiveTags(this.activeTags);
+        this.notes$ = this.fetchNotes(this.activeTags);
       });
   }
 
@@ -66,16 +72,16 @@ export class OverviewComponent implements OnInit {
    * @param tag The filter tag to check if it is an active filter tag.
    * @returns {boolean} True if the tag is an active filter.
    */
-  isFilterTagActive(tag) {
+  public isFilterTagActive(tag): boolean {
     return this.activeTags.indexOf(tag.$key) > -1;
   }
 
   /**
    * Toggles the filter tag to be active or inactive, depending on its current state.
    *
-   * @param tagKey The tag key.
+   * @param {string}  tagKey The tag key.
    */
-  toggleTagFilter(tagKey) {
+  toggleTagFilter(tagKey: string): void {
     const filterTags = this.localStorage.retrieve('filterTags');
 
     if (filterTags.indexOf(tagKey) === -1) {
@@ -90,10 +96,17 @@ export class OverviewComponent implements OnInit {
     this.localStorage.store('filterTags', filterTags);
   }
 
-  private loadNotesForActiveTags(activeTags) {
-    return this.angularFire.database.list('/notes/' + this.teamKey)
+  /**
+   * Method to fetch notes for current team with currently selected tags.
+   *
+   * @param {Array<Tag>}  activeTags
+   * @returns {Observable<Array<Note>>}
+   */
+  private fetchNotes(activeTags: Array<Tag>): Observable<Array<Note>> {
+    return this.angularFire.database
+      .list(`/notes/${this.teamKey}`)
       .map(notes => {
-        this.filterTags = notes
+        return notes
           .filter(note => {
             if (note.hasOwnProperty('tags')) {
               return note.tags.filter(noteTag => activeTags.indexOf(noteTag) !== -1).length > 0;
@@ -102,17 +115,16 @@ export class OverviewComponent implements OnInit {
             return false;
           })
           .map(note => {
-            note.user$ = this.angularFire.database.object('/users/' + note.user);
+            note.user$ = this.angularFire.database.object(`/users/${note.user}`);
 
             if (note.hasOwnProperty('tags') && note.tags.length > 0) {
-              note.tags$ = Observable.of(note.tags.map(tag => this.angularFire.database.object('/tags/' + tag)));
+              note.tags = Observable.of(note.tags.map(tag => this.angularFire.database.object(`/tags/${tag}`)));
             } else {
-              note.tags$ = Observable.of([]);
+              note.tags = Observable.of([]);
             }
 
             return note;
           });
-
-      }).subscribe();
+      });
   }
 }
