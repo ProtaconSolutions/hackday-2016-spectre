@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
-import { Observable } from 'rxjs';
-import { Tag } from '../shared/interfaces/tag';
+import { Observable } from 'rxjs/Observable';
+
+import { Tag } from '../shared/models/';
 
 @Component({
   selector: 'app-overview',
@@ -10,7 +11,7 @@ import { Tag } from '../shared/interfaces/tag';
   styleUrls: ['./overview.component.scss']
 })
 
-export class overviewComponent implements OnInit {
+export class OverviewComponent implements OnInit {
   public tags: FirebaseListObservable<Tag[]>;
   private teamKey: string;
   private uid: string;
@@ -75,7 +76,7 @@ export class overviewComponent implements OnInit {
    * @param tagKey The tag key.
    */
   toggleTagFilter(tagKey) {
-    let filterTags = this.localStorage.retrieve('filterTags');
+    const filterTags = this.localStorage.retrieve('filterTags');
 
     if (filterTags.indexOf(tagKey) === -1) {
       // The tag was not found in the filter tags. => Add it as one of the active filters.

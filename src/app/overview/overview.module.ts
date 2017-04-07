@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 
 import { SharedModule } from '../shared/shared.module';
-import { overviewRoutingModule } from './overview-routing.module';
-import { overviewComponent } from './overview.component';
+import { OverviewRoutingModule } from './overview-routing.module';
+import { OverviewComponent } from './overview.component';
 
 @NgModule({
   imports: [
     SharedModule,
-    overviewRoutingModule,
+    OverviewRoutingModule,
   ],
   declarations: [
-    overviewComponent,
+    OverviewComponent,
   ],
   exports: [
-    overviewComponent,
+    OverviewComponent,
   ],
 })
 

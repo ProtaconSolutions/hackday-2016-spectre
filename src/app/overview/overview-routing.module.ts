@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { overviewComponent } from "./overview.component";
 import { AuthenticationGuard } from '../shared';
-
+import { OverviewComponent } from './overview.component';
 
 @NgModule({
   imports: [
     RouterModule.forChild([
       {
         path: 'overview',
-        component: overviewComponent,
+        component: OverviewComponent,
         canActivate: [
           AuthenticationGuard,
         ],
@@ -22,4 +21,4 @@ import { AuthenticationGuard } from '../shared';
   ],
 })
 
-export class overviewRoutingModule { }
+export class OverviewRoutingModule { }
