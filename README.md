@@ -7,7 +7,7 @@ First of all you have to install npm and node.js to your box. Installation instr
 Note that node.js 6.x or newer is required.
 
 ```bash
-$ git clone https://github.com/ProtaconSolutions/hackday-2016-spectre.git
+$ git clone https://github.com/protacon/hackday-2016-spectre.git
 $ cd hackday-2016-spectre
 
 # install the project's dependencies
