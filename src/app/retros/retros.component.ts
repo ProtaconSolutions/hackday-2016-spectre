@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
-import { LocalStorageService } from 'ng2-webstorage';
+import { TeamService } from '../shared/services/';
 
 @Component({
   selector: 'app-retros',
@@ -9,7 +9,6 @@ import { LocalStorageService } from 'ng2-webstorage';
 })
 export class RetrosComponent implements OnInit {
   public retros: FirebaseListObservable<any[]>;
-  public team: any;
 
   public madNotes: any;
   public sadNotes: any;
@@ -19,32 +18,28 @@ export class RetrosComponent implements OnInit {
   public sadId: string;
   public gladId: string;
 
+  private team: any;
+  private teamKey: string;
+
   constructor(
     private angularFire: AngularFire,
-    private localStorage: LocalStorageService
+    private teamService: TeamService
   ) { }
 
   ngOnInit() {
-    this.team = this.localStorage.retrieve('team');
-    this.retros = this.angularFire.database.list('/retros/'+this.team.$key);
-    this.getRetroNotes(this.team.$key);
+    this.teamService.team$.subscribe(team => {
+      this.team = team;
+      this.teamKey = team.$key;
 
-    this.localStorage
-      .observe('team')
-      .subscribe((value) => {
-        this.team = value;
-        this.retros = this.angularFire.database.list('/retros/'+this.team.$key);
-
-        this.getRetroNotes(this.team.$key);
-      });
+      this.retros = this.angularFire.database.list(`/retros/${this.teamKey}`);
+      this.getRetroNotes();
+    });
   }
 
   /**
    * Gets retrospective notes for the given team.
-   * @param teamKey Team identifier
    */
-  private getRetroNotes(teamKey){
-
+  private getRetroNotes() {
     let tags = this.angularFire.database.list('tags', {
       query: {
         orderByChild: 'type',
@@ -52,7 +47,7 @@ export class RetrosComponent implements OnInit {
       }
     });
 
-    let teamNotes = this.angularFire.database.list('/notes/' + teamKey);
+    let teamNotes = this.angularFire.database.list(`/notes/${this.teamKey}`);
 
     // Get mad notes
     tags.map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Mad'))
