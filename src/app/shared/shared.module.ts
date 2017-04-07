@@ -7,10 +7,11 @@ import { NgModule } from '@angular/core';
 import { AngularFireModule } from 'angularfire2';
 import { MomentModule } from 'angular2-moment';
 import { Ng2Webstorage } from 'ng2-webstorage';
-import { MaterializeDirective, MaterializeModule } from 'angular2-materialize';
+import { MaterializeModule } from 'angular2-materialize';
 
 import { Config } from '../config/config';
 import { AuthenticationModule } from './authentication/authentication.module';
+import { Services } from './services/';
 
 @NgModule({
   declarations: [],
@@ -25,7 +26,9 @@ import { AuthenticationModule } from './authentication/authentication.module';
     Ng2Webstorage,
     MaterializeModule,
   ],
-  providers: [],
+  providers: [
+    ...Services,
+  ],
   exports: [
     CommonModule,
     BrowserModule,
