@@ -2,11 +2,11 @@ import * as firebase from 'firebase'; // See https://github.com/angular/angularf
 import { AuthProviders, AuthMethods } from 'angularfire2';
 
 export const FIREBASE_CONFIG = {
-  apiKey: '<your-key>',
-  authDomain: '<your-project-authdomain>',
-  databaseURL: '<your-database-URL>',
-  storageBucket: '<your-storage-bucket>',
-  messagingSenderId: '<your-messagingSenderId>'
+  apiKey: '<your-key>', // Visible in firebase project settings general tab.
+  authDomain: '<your-project-authdomain>', // Visible in firebase hosting pane.
+  databaseURL: '<your-database-URL>', // Visible in firebase database pane.
+  storageBucket: '<your-storage-bucket>', // Visible in firebase storage pane (omit the protocol from the url).
+  messagingSenderId: '<your-messagingSenderId>' // Visible in firebase project settings cloud messaging tab.
 };
 
 export const FIREBASE_AUTH_CONFIG = {
