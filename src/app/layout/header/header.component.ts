@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { Router } from '@angular/router';
 import { LocalStorageService } from 'ng2-webstorage';
+import { TeamService } from '../../shared/services/';
 
 @Component({
   selector: 'app-header',
@@ -16,18 +17,14 @@ export class HeaderComponent implements OnInit {
   public constructor(
     private angularFire: AngularFire,
     private router: Router,
-    private localStorage: LocalStorageService
+    private localStorage: LocalStorageService,
+    private teamService: TeamService,
   ) { }
 
   public ngOnInit() {
-    this.team = this.localStorage.retrieve('team');
-    this.uid = this.localStorage.retrieve('uid');
+    this.teamService.team$.subscribe(team => { this.team = team; });
 
-    this.localStorage
-      .observe('team')
-      .subscribe((value) => {
-        this.team = value;
-      });
+    this.uid = this.localStorage.retrieve('uid');
 
     this.localStorage
       .observe('uid')
