@@ -1,7 +1,10 @@
-<h4>Action Points</h4>
+<h4>Open Action Points</h4>
 
 <ul>
   <li *ngFor="let ap of actionPoints | async">
+    <div class="collapsible-header">
+    {{ap.text}} <small>{{(ap.user$ | async)?.name}}</small>
+    </div>
   </li>
 </ul>
 

@@ -67,13 +67,17 @@ export class NotesComponent implements OnInit {
         }
       });
 
-      this.angularFire.database.list('tags', {
-        query: {
-          orderByChild: 'type',
-          equalTo: 'noteType',
-        }
-      }).map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Comment'))
-        .subscribe(value => {this.commentTypeKey = value[0].$key; });
+      this.angularFire.database
+        .list('tags', {
+          query: {
+            orderByChild: 'type',
+            equalTo: 'noteType',
+          }
+        })
+        .map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Comment'))
+        .subscribe(value => {
+          this.commentTypeKey = (value[0] && value[0].hasOwnProperty('$key')) ? value[0].$key : null;
+        });
   }
 
   public addNewNote(parent?: string) {
