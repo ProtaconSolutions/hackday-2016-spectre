@@ -57,34 +57,40 @@ export class RetrosComponent implements OnInit {
     // Get mad notes
     tags.map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Mad'))
       .subscribe(value => {
-        this.madId = value[0].$key;
+        this.madId = (value[0] && value[0].hasOwnProperty('$key')) ? value[0].$key : null;
 
-        teamNotes.map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.madId)))
-          .subscribe(filteredNotes => {
-            this.madNotes = filteredNotes;
-          });
+        if (this.madId) {
+          teamNotes.map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.madId)))
+            .subscribe(filteredNotes => {
+              this.madNotes = filteredNotes;
+            });
+        }
       });
 
     // Get sad notes
     tags.map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Sad'))
       .subscribe(value => {
-        this.sadId = value[0].$key;
+        this.sadId = (value[0] && value[0].hasOwnProperty('$key')) ? value[0].$key : null;
 
-        teamNotes.map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.sadId)))
-          .subscribe(filteredNotes => {
-            this.sadNotes = filteredNotes;
-          });
+        if (this.sadId) {
+          teamNotes.map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.sadId)))
+            .subscribe(filteredNotes => {
+              this.sadNotes = filteredNotes;
+            });
+        }
       });
 
     // Get glad notes
     tags.map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Glad'))
       .subscribe(value => {
-        this.gladId = value[0].$key;
+        this.gladId = (value[0] && value[0].hasOwnProperty('$key')) ? value[0].$key : null;
 
-        teamNotes.map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.gladId)))
-          .subscribe(filteredNotes => {
-            this.gladNotes = filteredNotes;
-          });
+        if (this.gladId) {
+          teamNotes.map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.gladId)))
+            .subscribe(filteredNotes => {
+              this.gladNotes = filteredNotes;
+            });
+        }
       });
   }
 }
