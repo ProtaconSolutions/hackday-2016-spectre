@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
-import * as firebase from 'firebase';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -49,6 +48,12 @@ export class WarboardComponent implements OnInit {
     });
 
     this.actionPoints = this.getOpenActionPointsByTeamKey(teamKey);
+
+    this.localStorage
+      .observe('team')
+      .subscribe((team) => {
+        this.actionPoints = this.getOpenActionPointsByTeamKey(team.$key);
+      });
   }
 
   private getOpenActionPointsByTeamKey(teamKey) {
