@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 import * as firebase from 'firebase';
-import { Team } from "../shared/interfaces/team";
+import { Team } from "../shared/models/team.model";
 
 @Component({
   selector: 'app-teams',

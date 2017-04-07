@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
-import { Tag } from "../shared/interfaces/tag";
+import { Tag } from "../shared/models/tag.model";
 import * as firebase from 'firebase';
 
 @Component({
