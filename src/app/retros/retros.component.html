@@ -10,7 +10,16 @@
       <div fxLayout="row" fxLayoutAlign="start center">
         <strong>{{ retro.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm' }}</strong>
         <span fxFlex="8px"></span>
-        <small>{{ retro.createdAt | amTimeAgo }}</small>
+
+        <div *ngIf="!retro.updatedAt" fxLayout="row" fxLayoutAlign="start center">
+          <small>Not yet completed...</small>
+        </div>
+
+        <div *ngIf="retro.updatedAt" fxLayout="row" fxLayoutAlign="start center">
+          <small >{{ retro.updatedAt | amTimeAgo }}</small>
+          <span fxFlex="8px"></span>
+          <small>(duration {{ retro.updatedAt | amDifference: retro.createdAt : 'minute' : false | number }} minutes)</small>
+        </div>
       </div>
 
       <div fxLayout="row" fxLayoutAlign="start center">
