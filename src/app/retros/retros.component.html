@@ -1,23 +1,52 @@
-<ul>
+<ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
   <li *ngFor="let retro of retros | async">
-    Name:{{retro.name}} Date: {{retro.createdAt}}
-  </li>
-</ul>
+    <div class="collapsible-header" fxLayout="row" fxLayoutAlign="space-between center">
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <strong>{{ retro.createdAt | amDateFormat: 'YYYY-MM-DD HH:mm' }}</strong>
+        <span fxFlex="8px"></span>
+        <small>{{ retro.createdAt | amTimeAgo }}</small>
+      </div>
 
-<ul>
-  <li *ngFor="let note of madNotes">
-    {{note.text}}
-  </li>
-</ul>
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <small>notes:</small>
+        <span fxFlex="8px"></span>
+        <strong>{{ getRetroNotesCount(retro) | number}}</strong>
+      </div>
+    </div>
 
-<ul>
-  <li *ngFor="let note of sadNotes">
-    {{note.text}}
-  </li>
-</ul>
+    <div class="collapsible-body">
+      <strong>Mad</strong>
+      <ul>
+        <li *ngFor="let note of getNotes('Mad', retro)">
+          {{ note.text }}
+        </li>
 
-<ul>
-  <li *ngFor="let note of gladNotes">
-    {{note.text}}
+        <li *ngIf="getNotes('Mad', retro).length === 0">
+          <em>none</em>
+        </li>
+      </ul>
+
+      <strong>Sad</strong>
+      <ul>
+        <li *ngFor="let note of getNotes('Sad', retro)">
+          {{ note.text }}
+        </li>
+
+        <li *ngIf="getNotes('Sad', retro).length === 0">
+          <em>none</em>
+        </li>
+      </ul>
+
+      <strong>Glad</strong>
+      <ul>
+        <li *ngFor="let note of getNotes('Glad', retro)">
+          {{ note.text }}
+        </li>
+
+        <li *ngIf="getNotes('Glad', retro).length === 0">
+          <em>none</em>
+        </li>
+      </ul>
+    </div>
   </li>
 </ul>

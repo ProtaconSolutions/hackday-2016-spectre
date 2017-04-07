@@ -12,6 +12,7 @@ import { MaterializeModule } from 'angular2-materialize';
 import { Config } from '../config/config';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { Services } from './services/';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   declarations: [],
@@ -23,6 +24,7 @@ import { Services } from './services/';
     RouterModule,
     AuthenticationModule.forRoot(),
     AngularFireModule.initializeApp(Config.FIREBASE_CONFIG, Config.FIREBASE_AUTH_CONFIG),
+    FlexLayoutModule,
     Ng2Webstorage,
     MaterializeModule,
   ],
@@ -38,6 +40,7 @@ import { Services } from './services/';
     AuthenticationModule,
     AngularFireModule,
     MomentModule,
+    FlexLayoutModule,
     Ng2Webstorage,
     MaterializeModule,
   ],
