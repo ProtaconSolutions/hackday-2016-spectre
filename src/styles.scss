@@ -1,5 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
-@import "../node_modules/materialize-css/dist/css/materialize.css";
+@import '../node_modules/materialize-css/dist/css/materialize.css';
+
+body {
+  overflow-y: scroll;
+}
+
+h1, h2, h3, h4 {
+  margin-top: 8px;
+}
 
 a:not([href]){
   cursor: pointer;
