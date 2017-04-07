@@ -19,7 +19,8 @@ $ yarn install  # or yarn
 
 ## Configuration
 See ```/src/app/config/config.ts_example``` file and copy it to ```/src/app/config/config.ts``` file and make necessary 
-changes to it. Note that you need a Firebase account to get all necessary config values.
+changes to it. Note that you need a Firebase account to get all necessary config values. You'll also need to be invited
+by an existing project member to use the Firebase project.
 
 # Development
 To start developing in the project run:
