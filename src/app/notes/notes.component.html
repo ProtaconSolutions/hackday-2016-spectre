@@ -1,7 +1,7 @@
 <h4>Add new note</h4>
 
 <form #noteForm="ngForm" (submit)="addNewNote()">
-  <div *ngFor="let tag of noteTypes | async">
+  <div *ngFor="let tag of noteTypes$ | async">
       <input name="noteType" type="radio" id="{{tag.name}}" [(ngModel)]="noteType" [value]="tag.$key" />
       <label for="{{tag.name}}">{{tag.name}}</label>
   </div>
@@ -47,7 +47,7 @@
       </ul>
 
       <form #note2Form="ngForm" (submit)="addNewNote(note.$key)">
-        <div [hidden]="!this.retroStarted" *ngFor="let t of commentTypes | async">
+        <div [hidden]="!this.retroStarted" *ngFor="let t of commentTypes$ | async">
             <input name="commentType" type="radio" [(ngModel)]="commentType" id="aaa{{t.$key}}" [value]="t.$key" />
             <label for="aaa{{t.$key}}">{{t.name}}</label>
         </div>

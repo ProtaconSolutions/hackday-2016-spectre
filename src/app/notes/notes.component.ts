@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
 import * as firebase from 'firebase';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+
 import { TeamService } from '../shared/services/team.service';
+import { Note, Tag, Team } from '../shared/models/';
 
 @Component({
   selector: 'app-notes',
@@ -15,9 +17,9 @@ export class NotesComponent implements OnInit {
   public notes: any;
   public note: string;
   public note2: string;
-  public noteTypes: any;
+  public noteTypes$: Observable<Array<Note>>;
   public noteType: string;
-  public commentTypes: any;
+  public commentTypes$: Observable<Array<Tag>>;
   public commentType: string;
   public retroStarted: boolean;
   public commentTypeKey: string;
@@ -25,7 +27,7 @@ export class NotesComponent implements OnInit {
   private uid: string;
   private users: any[];
   private openRetro: any;
-  private team: any;
+
   private teamKey: string;
 
   /**
@@ -45,8 +47,7 @@ export class NotesComponent implements OnInit {
 
   ngOnInit() {
     this.teamService.team$
-      .subscribe(team => {
-        this.team = team;
+      .subscribe((team: Team) => {
         this.teamKey = team.$key;
 
         this.notes = this.getOpenNotesByTeamKey();
@@ -54,7 +55,7 @@ export class NotesComponent implements OnInit {
       });
 
     // get note types e.g. Mad/Sad/Glad
-    this.noteTypes = this.angularFire.database
+    this.noteTypes$ = this.angularFire.database
       .list('/tags', {
         query: {
           orderByChild: 'type',
@@ -66,7 +67,7 @@ export class NotesComponent implements OnInit {
      * Note is 'first level' item and comments are sub-items of note
      * get comment types e.g. Comment / Decision / ActionPoint
      */
-    this.commentTypes = this.angularFire.database
+    this.commentTypes$ = this.angularFire.database
       .list('/tags', {
         query: {
           orderByChild: 'type',
@@ -81,9 +82,9 @@ export class NotesComponent implements OnInit {
           equalTo: 'noteType',
         }
       })
-      .map(types => types.filter(item => item.hasOwnProperty('name') && item.name === 'Comment'))
-      .subscribe(value => {
-        this.commentTypeKey = (value[0] && value[0].hasOwnProperty('$key')) ? value[0].$key : null;
+      .map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Comment'))
+      .subscribe(tag => {
+        this.commentTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
       });
   }
 
