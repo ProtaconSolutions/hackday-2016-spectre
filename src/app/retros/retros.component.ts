@@ -28,11 +28,11 @@ export class RetrosComponent implements OnInit {
       this.teamKey = team.$key;
 
       this.retros = this.angularFire.database.list(`/retros/${this.teamKey}`);
-    });
 
-    // And when we have tags resolved fetch notes
-    this.notesService.tags$.subscribe(() => {
-      this.getRetroNotes();
+      // And when we have tags resolved fetch notes
+      this.notesService.tags$.subscribe(() => {
+        this.getRetroNotes();
+      });
     });
   }
 
