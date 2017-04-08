@@ -21,9 +21,11 @@ export class TeamService {
     this.localStorage
       .observe('team')
       .subscribe((team: Team) => {
-        this.team = team;
+        if (this.team !== team) {
+          this.team = team;
 
-        this.team$.next(this.team);
+          this.team$.next(this.team);
+        }
       });
   }
 }
