@@ -171,11 +171,8 @@ export class NotesComponent implements OnInit, OnDestroy {
         // keep only notes not assigned to retrospective
         return results
           .filter(note => {
-            return !(
-              note.hasOwnProperty('parentNote') &&
-              note.parentNote !== '' &&
-              (!note.hasOwnProperty('retro') || note.retro === '')
-            );
+            return !(note.hasOwnProperty('parentNote') && note.parentNote !== '') &&
+              (!note.hasOwnProperty('retro') || note.retro === '');
           })
           .map(note => {
             note.notes = copyOfResults.filter(_note => _note.parentNote === note.$key);

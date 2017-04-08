@@ -28,28 +28,39 @@
       *ngIf="notes.length"
     >
       <li *ngFor="let note of notes">
-        <div class="collapsible-header">
-          <span class="new tags badge" *ngIf="note.notes.length > 0">Replies {{note.notes.length}}</span>
+        <div class="collapsible-header" fxLayout="row" fxLayoutAlign="space-between center">
+          <div fxLayout="row" fxLayoutAlign="start center">
+            <span>{{note.text}}</span>
+            <span fxFlex="8px"></span>
+            <small>{{(note.user$ | async)?.name}}</small>
+          </div>
 
-          <span class="new tags badge"
-                *ngFor="let tag of note.tags$ | async"
-                [ngClass]="(tag | async)?.type"
-          >{{(tag | async)?.name}}</span>
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <span class="tags badge"
+              *ngIf="note.notes.length > 0"
+            >Replies {{ note.notes.length }}</span>
 
-          {{note.text}} <small>{{(note.user$ | async)?.name}}</small>
+            <span class="tags badge"
+              *ngFor="let tag of note.tags$ | async"
+              [ngClass]="(tag | async)?.name"
+            >{{ (tag | async)?.name }}</span>
+          </div>
         </div>
 
         <div class="collapsible-body">
           <ul materialize="collapsible" class="collapsible" data-collapsible="accordion">
             <li *ngFor="let _note of note.notes">
-              <div class="collapsible-header">
+              <div class="collapsible-header" fxLayout="row" fxLayoutAlign="space-between center">
+                <div fxLayout="row" fxLayoutAlign="start center">
+                  <span>{{_note.text}}</span>
+                  <span fxFlex="8px"></span>
+                  <small>{{(_note.user$ | async)?.name}}</small>
+                </div>
 
-                <span class="new tags badge"
+                <span class="tags badge"
                   *ngFor="let tag of _note.tags$ | async"
-                  [ngClass]="(tag | async)?.type"
+                  [ngClass]="(tag | async)?.name"
                 >{{(tag | async)?.name}}</span>
-
-                {{_note.text}} <small>{{(_note.user$ | async)?.name}}</small>
               </div>
             </li>
           </ul>
