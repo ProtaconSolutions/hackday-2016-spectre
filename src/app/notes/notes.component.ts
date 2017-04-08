@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
 import * as firebase from 'firebase';
@@ -13,10 +13,11 @@ import { Note, Tag, Team } from '../shared/models/';
   styleUrls: ['./notes.component.scss']
 })
 
-export class NotesComponent implements OnInit {
+export class NotesComponent implements OnInit, OnDestroy {
   public notes$: Observable<Array<Note>>;
   public noteTypes$: Observable<Array<Tag>>;
   public commentTypes$: Observable<Array<Tag>>;
+  public retro$: any;
   public note: string;
   public note2: string;
   public noteType: string;
@@ -46,10 +47,14 @@ export class NotesComponent implements OnInit {
   ngOnInit() {
     this.teamService.team$
       .subscribe((team: Team) => {
+        if (!team) {
+          return;
+        }
+
         this.teamKey = team.$key;
 
         this.notes$ = this.getOpenNotesByTeamKey();
-        this.getOpenRetroByTemKey();
+        this.retro$ = this.getOpenRetro();
       });
 
     // get note types e.g. Mad/Sad/Glad
@@ -84,6 +89,10 @@ export class NotesComponent implements OnInit {
       .subscribe(tag => {
         this.commentTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.retro$.unsubscribe();
   }
 
   public addNewNote(parent?: string) {
@@ -176,11 +185,12 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  private getOpenRetroByTemKey() {
-    this.angularFire.database.list(`/retros/${this.teamKey}`)
+  private getOpenRetro() {
+    return this.angularFire.database.list(`/retros/${this.teamKey}`)
       .map(retros => retros.filter(retro => !(retro.hasOwnProperty('updatedAt') && retro.updatedAt > 0)))
       .subscribe(value => {
         this.retroStarted = value.length > 0;
+
         if (this.retroStarted) {
           this.openRetro = value[0];
         }

@@ -51,6 +51,10 @@ export class OverviewComponent implements OnInit {
 
     this.teamService.team$
       .subscribe((team: Team) => {
+        if (!team) {
+          return;
+        }
+
         this.teamKey = team.$key;
 
         this.notes$ = this.fetchNotes(this.activeTags);

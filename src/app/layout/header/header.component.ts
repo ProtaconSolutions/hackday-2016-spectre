@@ -21,7 +21,7 @@ export class HeaderComponent implements OnInit {
     private teamService: TeamService,
   ) { }
 
-  public ngOnInit() {
+  public ngOnInit(): void {
     this.teamService.team$.subscribe(team => { this.team = team; });
 
     this.uid = this.localStorage.retrieve('uid');
@@ -34,9 +34,9 @@ export class HeaderComponent implements OnInit {
   }
 
   public logout() {
-    this.angularFire.auth.logout();
-    this.localStorage.clear();
-
-    this.router.navigate(['/blank']);
+    this.router.navigate(['/blank']).then(() => {
+      this.angularFire.auth.logout();
+      this.localStorage.clear();
+    });
   }
 }

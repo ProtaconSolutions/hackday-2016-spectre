@@ -41,6 +41,10 @@ export class RetrosComponent implements OnInit {
    */
   ngOnInit() {
     this.teamService.team$.subscribe(team => {
+      if (!team) {
+        return;
+      }
+
       this.teamKey = team.$key;
 
       this.retros$ = this.angularFire.database.list(`/retros/${this.teamKey}`);

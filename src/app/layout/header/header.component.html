@@ -1,55 +1,55 @@
 <nav class="nav-extended light-blue accent-3">
-    <div class="nav-wrapper"
-        *ngIf="uid"
+  <div class="nav-wrapper"
+    *ngIf="uid"
+  >
+    <span class="brand-logo">
+        <span *ngIf="team">{{team?.name}}</span>
+        <span *ngIf="!team"><em>Choose team</em></span>
+    </span>
+
+    <ul class="right">
+      <li>
+        <a routerLink="/tags">Tags</a>
+      </li>
+      <li>
+        <a routerLink="/teams">Teams</a>
+      </li>
+      <li>
+        <a (click)="logout()">Logout</a>
+      </li>
+    </ul>
+
+    <ul class="tabs tabs-transparent"
+      materialize="tabs"
     >
-        <span class="brand-logo">
-            <span *ngIf="team">{{team?.name}}</span>
-            <span *ngIf="!team"><em>Choose team</em></span>
-        </span>
-
-        <ul class="right">
-            <li>
-                <a routerLink="/tags">Tags</a>
-            </li>
-            <li>
-                <a routerLink="/teams">Teams</a>
-            </li>
-            <li>
-                <a (click)="logout()">Logout</a>
-            </li>
-        </ul>
-
-        <ul class="tabs tabs-transparent"
-            materialize="tabs"
-        >
-            <li class="tab">
-              <a
-                [ngClass]="{disabled: !team}"
-                routerLinkActive="active"
-                routerLink="/warboard"
-              >Warboard</a>
-            </li>
-            <li class="tab">
-                <a
-                    [ngClass]="{disabled: !team}"
-                    routerLinkActive="active"
-                    routerLink="/notes"
-                >Notes</a>
-            </li>
-            <li class="tab">
-                <a
-                    [ngClass]="{disabled: !team}"
-                    routerLinkActive="active"
-                    routerLink="/retros"
-                >Retros</a>
-            </li>
-            <li class="tab">
-                <a
-                    [ngClass]="{disabled: !team}"
-                    routerLinkActive="active"
-                    routerLink="/overview"
-                >Overview</a>
-            </li>
-        </ul>
-    </div>
+      <li class="tab">
+        <a
+          [ngClass]="{disabled: !team}"
+          routerLinkActive="active"
+          routerLink="/warboard"
+        >Warboard</a>
+      </li>
+      <li class="tab">
+        <a
+          [ngClass]="{disabled: !team}"
+          routerLinkActive="active"
+          routerLink="/notes"
+        >Notes</a>
+      </li>
+      <li class="tab">
+        <a
+          [ngClass]="{disabled: !team}"
+          routerLinkActive="active"
+          routerLink="/retros"
+        >Retros</a>
+      </li>
+      <li class="tab">
+        <a
+          [ngClass]="{disabled: !team}"
+          routerLinkActive="active"
+          routerLink="/overview"
+        >Overview</a>
+      </li>
+    </ul>
+  </div>
 </nav>
