@@ -14,20 +14,18 @@ import { Note, Tag, Team } from '../shared/models/';
 })
 
 export class NotesComponent implements OnInit {
-  public notes: any;
+  public notes$: Observable<Array<Note>>;
+  public noteTypes$: Observable<Array<Tag>>;
+  public commentTypes$: Observable<Array<Tag>>;
   public note: string;
   public note2: string;
-  public noteTypes$: Observable<Array<Note>>;
   public noteType: string;
-  public commentTypes$: Observable<Array<Tag>>;
   public commentType: string;
   public retroStarted: boolean;
   public commentTypeKey: string;
 
   private uid: string;
-  private users: any[];
   private openRetro: any;
-
   private teamKey: string;
 
   /**
@@ -50,7 +48,7 @@ export class NotesComponent implements OnInit {
       .subscribe((team: Team) => {
         this.teamKey = team.$key;
 
-        this.notes = this.getOpenNotesByTeamKey();
+        this.notes$ = this.getOpenNotesByTeamKey();
         this.getOpenRetroByTemKey();
       });
 
@@ -91,10 +89,10 @@ export class NotesComponent implements OnInit {
   public addNewNote(parent?: string) {
     // Resolve comment type. Use 'Comment' as default.
     // 'Decisions' and 'Action Points' are allowed only when there is 'open' retrospective
-    let commentType = this.commentType ? this.commentType : this.commentTypeKey;
+    const commentType = this.commentType ? this.commentType : this.commentTypeKey;
 
     // create entity
-    let note = {
+    const note = {
       parentNote: parent ? parent : '',
       team: this.teamKey,
       text: parent ? this.note2 : this.note,
@@ -105,7 +103,9 @@ export class NotesComponent implements OnInit {
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
-    this.angularFire.database.list(`/notes/${this.teamKey}`).push(note);
+    this.angularFire.database
+      .list(`/notes/${this.teamKey}`)
+      .push(note);
 
     // clear inputs
     this.note = '';
@@ -113,27 +113,31 @@ export class NotesComponent implements OnInit {
   }
 
   public startRetrospective() {
-    let retro = {
+    const retro = {
       name: 'Sprint retro',
       team: this.teamKey,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: 0
     };
 
-    this.angularFire.database.list(`/retros/${this.teamKey}`).push(retro);
+    this.angularFire.database
+      .list(`/retros/${this.teamKey}`)
+      .push(retro);
   }
 
-  public completeRetrospective(retroKey) {
+  public completeRetrospective(retroKey: string): void {
     this.linkOpenNotesToRetro(retroKey);
 
-    let retro = {
+    const retro = {
       name: this.openRetro.name,
       team: this.openRetro.team,
       createdAt: this.openRetro.createdAt,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
-    this.angularFire.database.list(`/retros/${this.teamKey}`).update(retroKey, retro);
+    this.angularFire.database
+      .list(`/retros/${this.teamKey}`)
+      .update(retroKey, retro);
   }
 
   private getOpenNotesByTeamKey() {
@@ -157,7 +161,13 @@ export class NotesComponent implements OnInit {
         // and add 'comments'(entities with parent) as sub-notes
         // keep only notes not assigned to retrospective
         return results
-          .filter(note => !(note.hasOwnProperty('parentNote') && note.parentNote !== '') && (!note.hasOwnProperty('retro') || note.retro === ''))
+          .filter(note => {
+            return !(
+              note.hasOwnProperty('parentNote') &&
+              note.parentNote !== '' &&
+              (!note.hasOwnProperty('retro') || note.retro === '')
+            );
+          })
           .map(note => {
             note.notes = copyOfResults.filter(_note => _note.parentNote === note.$key);
 
@@ -177,10 +187,10 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  private linkOpenNotesToRetro(retroKey){
+  private linkOpenNotesToRetro(retroKey) {
     const noteList = this.angularFire.database.list(`/notes/${this.teamKey}`);
 
-    const subscription = this.notes.subscribe(items => items.forEach((item) => {
+    const subscription = this.notes$.subscribe(items => items.forEach((item) => {
       noteList.update(item.$key, {retro: retroKey});
 
       item.notes.forEach((child) => {

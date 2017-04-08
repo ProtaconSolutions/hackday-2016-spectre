@@ -1,6 +1,7 @@
 export class Note {
   $key: string;
   createdAt: number;
+  notes?: Array<Note>;
   parentNote: Note;
   retro: string;
   tags: Array<string>;
