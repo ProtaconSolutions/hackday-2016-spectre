@@ -1,81 +1,48 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
-import { LocalStorageService } from 'ng2-webstorage';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+
+import { NotesService, TeamService } from '../shared/services/';
+import { Note } from 'app/shared/models';
 
 @Component({
   selector: 'app-warboard',
   templateUrl: './warboard.component.html',
   styleUrls: ['./warboard.component.scss']
 })
+
 export class WarboardComponent implements OnInit {
-  public actionPoints: any;
-  public decisions: any;
+  public actionPoints$: Observable<Array<Note>>;
+  public decisions$: Observable<Array<Note>>;
 
-  public actionPointTag: any;
-
-  private uid: string;
+  private teamKey: string;
 
   /**
-   * Constructor
+   * Constructor of the class
    *
-   * @param {AngularFire} angularFire
-   * @param {LocalStorageService} localStorage
+   * @param {TeamService}   teamService
+   * @param {NotesService}  notesService
    */
-  constructor(
-    private angularFire: AngularFire,
-    private localStorage: LocalStorageService
-  ) {
-    this.uid = localStorage.retrieve('uid');
-  }
+  public constructor(
+    private teamService: TeamService,
+    private notesService: NotesService,
+  ) { }
 
-  ngOnInit() {
-    const teamKey = this.localStorage.retrieve('team').$key;
-
-    // get action point note type
-    this.angularFire.database.list('/tags', {
-      query: {
-        orderByChild: 'type',
-        equalTo: 'noteType',
+  /**
+   * On init life cycle hook method.
+   */
+  public ngOnInit(): void {
+    this.teamService.team$.subscribe(team => {
+      if (!team) {
+        return;
       }
-    })
-    .subscribe(tags => {
-      tags.forEach(tag => {
-        if(tag.hasOwnProperty('name') && tag.name === 'Decision') {
-          this.actionPointTag = tag.$key;
-        }
-      })
+
+      this.teamKey = team.$key;
+
+      // And when we have tags resolved fetch notes for team
+      this.notesService.noteTypes$.subscribe(() => {
+        this.actionPoints$ = this.notesService.getNoteTypes(this.teamKey, 'ActionPoint');
+        this.decisions$ = this.notesService.getNoteTypes(this.teamKey, 'Decision');
+      });
     });
-
-    this.actionPoints = this.getOpenActionPointsByTeamKey(teamKey);
-
-    this.localStorage
-      .observe('team')
-      .subscribe((team) => {
-        this.actionPoints = this.getOpenActionPointsByTeamKey(team.$key);
-      });
   }
-
-  private getOpenActionPointsByTeamKey(teamKey) {
-
-    return this.angularFire.database.list('/notes/' + teamKey)
-      .map(results => {
-        results = results.map(note => {
-          note.user$ = this.angularFire.database.object('/users/' + note.user);
-
-          if (note.hasOwnProperty('tags') && note.tags.length > 0) {
-            note.tags$ = Observable.of(note.tags.map(tag => this.angularFire.database.object('/tags/' + tag)));
-          } else {
-            note.tags$ = Observable.of([]);
-          }
-
-          return note;
-        });
-
-        return results
-          .filter(note => (note.hasOwnProperty('tags') && note.tags.filter(noteTag => noteTag === this.actionPointTag).length > 0))
-          .filter(note => (note.hasOwnProperty('retro') && note.retro !== ''));
-      });
-  }
-
 }

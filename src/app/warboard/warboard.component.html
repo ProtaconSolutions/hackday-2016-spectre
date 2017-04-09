@@ -1,9 +1,11 @@
 <h4>Open Action Points</h4>
 
 <ul>
-  <li *ngFor="let ap of actionPoints | async">
+  <li *ngFor="let actionPoint of actionPoints$ | async">
     <div class="collapsible-header">
-    {{ap.text}} <small>{{(ap.user$ | async)?.name}}</small>
+      {{ actionPoint.text }}
+
+      <small>{{ (actionPoint.user$ | async)?.name }}</small>
     </div>
   </li>
 </ul>
@@ -11,6 +13,11 @@
 <h4>Decisions</h4>
 
 <ul>
-  <li *ngFor="let decision of decisions | async">
+  <li *ngFor="let decision of decisions$ | async">
+    <div class="collapsible-header">
+      {{ decision.text }}
+
+      <small>{{ (decision.user$ | async)?.name }}</small>
+    </div>
   </li>
 </ul>
