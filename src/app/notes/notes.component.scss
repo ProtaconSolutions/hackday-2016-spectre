@@ -14,24 +14,3 @@
     padding: 16px;
   }
 }
-
-span.badge.tags {
-  font-weight: 300;
-  font-size: 0.8rem;
-  color: #fff;
-  background-color: #26a69a !important;
-  border-radius: 2px;
-  margin-top: 0 !important;
-
-  &.Mad {
-    background-color: #a64336 !important;
-  }
-
-  &.Sad {
-    background-color: #a6a232 !important;
-  }
-
-  &.Glad {
-    background-color: #33a637 !important;
-  }
-}

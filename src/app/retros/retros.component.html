@@ -22,11 +22,7 @@
         </div>
       </div>
 
-      <div fxLayout="row" fxLayoutAlign="start center">
-        <small>notes:</small>
-        <span fxFlex="8px"></span>
-        <strong>{{ getRetroNotesCount(retro) | number}}</strong>
-      </div>
+      <span class="tags badge">Notes: {{ getRetroNotesCount(retro) | number }}</span>
     </div>
 
     <div class="collapsible-body">
