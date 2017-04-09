@@ -1,7 +1,11 @@
 <h4>Open Action Points</h4>
 
-<ul>
-  <li *ngFor="let actionPoint of actionPoints$ | async">
+<ng-template #loadingActionPoints>
+  Loading...
+</ng-template>
+
+<ul *ngIf="actionPoints$ | async; else loadingActionPoints; let actionPoints">
+  <li *ngFor="let actionPoint of actionPoints">
     <div class="collapsible-header">
       {{ actionPoint.text }}
 
@@ -12,8 +16,12 @@
 
 <h4>Decisions</h4>
 
-<ul>
-  <li *ngFor="let decision of decisions$ | async">
+<ng-template #loadingDecisions>
+  Loading...
+</ng-template>
+
+<ul *ngIf="decisions$ | async; else loadingDecisions; let decisions">
+  <li *ngFor="let decision of decisions">
     <div class="collapsible-header">
       {{ decision.text }}
 
