@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFire } from 'angularfire2';
 import { Router } from '@angular/router';
+import { AngularFire } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
+
 import { TeamService } from '../../shared/services/';
+import { Team } from '../../shared/models/';
 
 @Component({
   selector: 'app-header',
@@ -11,9 +13,17 @@ import { TeamService } from '../../shared/services/';
 })
 
 export class HeaderComponent implements OnInit {
-  public team: any;
+  public team: Team;
   public uid: string;
 
+  /**
+   * Constructor of the class
+   *
+   * @param {AngularFire}         angularFire
+   * @param {Router}              router
+   * @param {LocalStorageService} localStorage
+   * @param {TeamService}         teamService
+   */
   public constructor(
     private angularFire: AngularFire,
     private router: Router,
@@ -21,18 +31,25 @@ export class HeaderComponent implements OnInit {
     private teamService: TeamService,
   ) { }
 
+  /**
+   * On init life cycle hook method.
+   */
   public ngOnInit(): void {
-    this.teamService.team$.subscribe(team => { this.team = team; });
-
-    this.uid = this.localStorage.retrieve('uid');
+    this.teamService.team$
+      .subscribe((team: Team) => {
+        this.team = team;
+      });
 
     this.localStorage
       .observe('uid')
-      .subscribe((value) => {
+      .subscribe((value: string) => {
         this.uid = value;
       });
   }
 
+  /**
+   * Method to logout current user.
+   */
   public logout() {
     this.router.navigate(['/blank']).then(() => {
       this.angularFire.auth.logout();

@@ -1,30 +1,34 @@
 <div>
-    <div class="foo light-blue accent-3 white-text">
-        <div class="col">
-            <h2>Spectre</h2>
+  <div class="navigation light-blue accent-3 white-text">
+    <div class="col">
+      <h2>Spectre</h2>
 
-            <h3 *ngIf="(angularFire.auth | async)?.uid">
-                <span >{{username}}</span>
-            </h3>
+      <h3 *ngIf="(angularFire.auth | async)?.uid">
+        <span>{{ username }}</span>
+      </h3>
 
-            <a class="waves-effect waves-teal btn-flat white-text"
-                *ngIf="!(angularFire.auth | async)?.uid" (click)="login('Google')"
-            >Login</a>
-        </div>
+      <a class="waves-effect waves-teal btn-flat white-text"
+        *ngIf="!(angularFire.auth | async)?.uid"
+        (click)="login('Google')"
+      >Login</a>
     </div>
+  </div>
 
-    <ul class="collection with-header">
-        <li *ngIf="(angularFire.auth | async)?.uid" class="collection-header">Teams</li>
-    </ul>
-    <div class="collection"
-         *ngIf="(angularFire.auth | async)?.uid"
+  <ul class="collection with-header">
+    <li class="collection-header"
+      *ngIf="(angularFire.auth | async)?.uid"
+    >Teams</li>
+  </ul>
+
+  <div class="collection"
+    *ngIf="(angularFire.auth | async)?.uid"
+  >
+    <a class="collection-item"
+      *ngFor="let team of teams$ | async"
+      (click)="selectTeam(team)"
+      [ngClass]="{ 'active': team === selectedTeam }"
     >
-        <a class="collection-item"
-           *ngFor="let team of teams | async"
-           (click)="selectTeam(team)"
-           [ngClass]="{'active': team == selectedTeam }"
-        >
-            {{team.name}}
-        </a>
-    </div>
+      {{ team.name }}
+    </a>
+  </div>
 </div>

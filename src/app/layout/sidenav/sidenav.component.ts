@@ -1,9 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFire, FirebaseListObservable, AuthProviders, AuthMethods } from 'angularfire2';
 import { Router } from '@angular/router';
+import { AngularFire, AuthProviders, AuthMethods } from 'angularfire2';
 import { LocalStorageService } from 'ng2-webstorage';
 import * as firebase from 'firebase';
+import { Observable } from 'rxjs/Observable';
+
 import 'rxjs';
+
+import { TeamService } from '../../shared/services/';
+import { Team } from '../../shared/models/';
 
 @Component({
   selector: 'app-sidenav',
@@ -13,29 +18,41 @@ import 'rxjs';
 
 export class SidenavComponent implements OnInit {
   public username: string;
-  public teams: FirebaseListObservable<any[]>;
+  public teams$: Observable<Array<Team>>;
   public selectedTeam: any;
 
+  /**
+   * Constructor of the class
+   *
+   * @param {AngularFire}         angularFire
+   * @param {Router}              router
+   * @param {LocalStorageService} localStorage
+   * @param {TeamService}         teamService
+   */
   public constructor(
-    private angularFire: AngularFire,
+    public angularFire: AngularFire,
     private router: Router,
-    private localStorage: LocalStorageService
+    private localStorage: LocalStorageService,
+    private teamService: TeamService
   ) { }
 
-  public ngOnInit() {
+  /**
+   * On init life cycle method hook
+   */
+  public ngOnInit(): void {
     this.angularFire.auth.subscribe((auth) => {
       if (auth) {
         this.username = auth.google.displayName;
-        this.teams = this.angularFire.database.list('/teams');
+        this.teams$ = this.angularFire.database.list('/teams');
       } else {
         this.username = '';
+        this.teams$ = Observable.of([]);
       }
     });
 
-    this.localStorage
-      .observe('team')
-      .subscribe((value) => {
-        this.selectedTeam = value;
+    this.teamService.team$
+      .subscribe((team: Team) => {
+        this.selectedTeam = team;
       });
   }
 
@@ -59,7 +76,12 @@ export class SidenavComponent implements OnInit {
     ;
   }
 
-  public selectTeam(team) {
+  /**
+   * Method to select team
+   *
+   * @param {Team}  team
+   */
+  public selectTeam(team: Team) {
     this.localStorage.store('team', team);
   }
 
@@ -67,8 +89,8 @@ export class SidenavComponent implements OnInit {
    * Stores a user to database if not yet existing.
    */
   private storeUserToDatabase() {
-    let firebaseUser = firebase.auth().currentUser;
-    let newUser = {
+    const firebaseUser = firebase.auth().currentUser;
+    const newUser = {
       name: firebaseUser.displayName,
       email: firebaseUser.email,
       uid: firebaseUser.uid,

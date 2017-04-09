@@ -10,11 +10,7 @@ import { SidenavModule } from './sidenav/sidenav.module';
     HeaderModule,
     SidenavModule,
   ],
-  exports: [
-    FooterModule,
-    HeaderModule,
-    SidenavModule,
-  ],
+  exports: [],
 })
 
 export class LayoutModule { }
