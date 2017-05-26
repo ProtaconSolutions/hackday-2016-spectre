@@ -2,23 +2,28 @@ import { Injectable } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Observable } from 'rxjs/Observable';
-
 import { Note, NoteTypes, Tag, Tags, ActionStatusTypes } from '../models/';
+import {DecisionStatuses} from '../models/decision-statuses.model';
 
 @Injectable()
 export class NotesService {
   public tags$: ReplaySubject<Tags> = new ReplaySubject(1);
   public noteTypes$: ReplaySubject<NoteTypes> = new ReplaySubject(1);
+  public statuses$: ReplaySubject<DecisionStatuses> = new ReplaySubject(1);
 
   private tags: Tags;
   private noteTypes: NoteTypes;
   private actionStatusTypes: ActionStatusTypes;
+  private statuses: DecisionStatuses;
   private madId: string;
   private sadId: string;
   private gladId: string;
   private actionPointId: string;
   private decisionId: string;
   private doneId: string;
+  private experimentStatusId: string;
+  private validStatusId: string;
+  private rejectedStatusId: string;
 
   /**
    * Constructor of the class
@@ -109,6 +114,37 @@ export class NotesService {
           };
         });
       });
+
+    this.angularFire.database
+      .list('tags', {
+        query: {
+          orderByChild: 'type',
+          equalTo: 'DecisionStatus',
+        }
+      })
+      .subscribe((tags: Array<Tag>) => {
+        tags.forEach(tag => {
+          switch (tag.name) {
+            case 'Experiment':
+              this.experimentStatusId = tag.$key;
+              break;
+            case 'Valid':
+              this.validStatusId = tag.$key;
+              break;
+            case 'Rejected':
+              this.rejectedStatusId = tag.$key;
+              break;
+          }
+
+          this.statuses = {
+            Experiment: this.experimentStatusId,
+            Valid: this.validStatusId,
+            Rejected: this.rejectedStatusId
+          };
+
+          this.statuses$.next(this.statuses);
+        });
+      });
   }
 
   /**
@@ -131,19 +167,58 @@ export class NotesService {
    * @param {string} type     Note type one of following: 'ActionPoint' or 'Decision'
    * @returns {Observable<Array<Note>>}
    */
-  public getNoteTypes(teamKey: string, type: string): Observable<Array<Note>> {
-    return this.angularFire.database
+  public getNoteTypes(teamKey: string, type: string, status: string): Observable<Array<Note>> {
+    let notes = this.angularFire.database
       .list(`/notes/${teamKey}`)
-      .map(notes => notes.filter(note =>
+      .map(mapNotes => mapNotes.filter(note =>
         note.hasOwnProperty('tags') &&
         note.tags.includes(this.noteTypes[type]) &&
-        !note.tags.includes(this.actionStatusTypes['Done'])))
-      .map(notes => {
-        return notes.map((note) => {
+        !note.tags.includes(this.actionStatusTypes['Done'])));
+
+    if (status !== '') {
+      notes = notes.map(mapNotes => mapNotes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.statuses[status])));
+    }
+
+    return notes.map(mapNotes => {
+        return mapNotes.map((note) => {
           note.user$ = this.angularFire.database.object(`/users/${note.user}`);
 
           return note;
         });
       });
+  }
+
+  public changeDecisionStatus(teamKey: string, noteKey: string, existingDecision: Note, status: string) {
+
+    let decision = {
+      text: existingDecision.text,
+      parentNote: existingDecision.parentNote,
+      retro: existingDecision.retro,
+      team: existingDecision.team,
+      user: existingDecision.user,
+      tags: existingDecision.tags,
+      createdAt: existingDecision.createdAt,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
+    };
+
+    // remove old status tags
+    let toRemove = decision.tags.indexOf(this.statuses['Experiment']);
+    if (toRemove > -1) {
+      decision.tags.splice(toRemove, 1);
+    }
+    toRemove = decision.tags.indexOf(this.statuses['Valid']);
+    if (toRemove > -1) {
+      decision.tags.splice(toRemove, 1);
+    }
+    toRemove = decision.tags.indexOf(this.statuses['Rejected']);
+    if (toRemove > -1) {
+      decision.tags.splice(toRemove, 1);
+    }
+
+    // add new status tag
+    decision.tags.push(this.statuses[status]);
+
+    // save changes
+    this.angularFire.database.list(`/notes/${teamKey}`).update(noteKey, decision);
   }
 }

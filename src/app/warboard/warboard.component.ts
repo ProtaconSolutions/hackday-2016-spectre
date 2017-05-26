@@ -13,6 +13,9 @@ import { Note, Team } from 'app/shared/models';
 export class WarboardComponent implements OnInit {
   public actionPoints$: Observable<Array<Note>>;
   public decisions$: Observable<Array<Note>>;
+  public experimentDecisions$: Observable<Array<Note>>;
+
+  private teamKey: string;
 
   /**
    * Constructor of the class
@@ -37,11 +40,22 @@ export class WarboardComponent implements OnInit {
         return;
       }
 
+      this.teamKey = team.$key;
+
       // And when we have note types resolved fetch action points and decisions for team
       this.notesService.noteTypes$.subscribe(() => {
-        this.actionPoints$ = this.notesService.getNoteTypes(team.$key, 'ActionPoint');
-        this.decisions$ = this.notesService.getNoteTypes(team.$key, 'Decision');
+        this.actionPoints$ = this.notesService.getNoteTypes(team.$key, 'ActionPoint', '');
+        this.decisions$ = this.notesService.getNoteTypes(team.$key, 'Decision', 'Valid');
+        this.experimentDecisions$ = this.notesService.getNoteTypes(team.$key, 'Decision', 'Experiment');
       });
     });
+  }
+
+  public acceptDecision(noteKey: string, decision: Note) {
+    this.notesService.changeDecisionStatus(this.teamKey, noteKey, decision, 'Valid');
+  }
+
+  public rejectDecision(noteKey: string, decision: Note) {
+    this.notesService.changeDecisionStatus(this.teamKey, noteKey, decision, 'Rejected');
   }
 }

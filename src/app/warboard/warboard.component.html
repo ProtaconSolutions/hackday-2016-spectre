@@ -14,7 +14,27 @@
   </li>
 </ul>
 
+
 <h4>Decisions</h4>
+
+<ng-template #loadingExperimentDecisions>
+  Loading...
+</ng-template>
+
+<ul *ngIf="experimentDecisions$ | async; else loadingExperimentDecisions; let experimentDecisions">
+  <li *ngFor="let decision of experimentDecisions">
+    <div class="collapsible-header">
+      {{ decision.text }}
+
+      <small>{{ (decision.user$ | async)?.name }}</small>
+      <button (click)="acceptDecision(decision.$key, decision)">Accept</button>
+      <button (click)="rejectDecision(decision.$key, decision)">Reject</button>
+      <span class="tags badge"
+      >Experiment</span>
+    </div>
+  </li>
+</ul>
+
 
 <ng-template #loadingDecisions>
   Loading...
@@ -26,6 +46,7 @@
       {{ decision.text }}
 
       <small>{{ (decision.user$ | async)?.name }}</small>
+      <button (click)="rejectDecision(decision.$key, decision)">Reject</button>
     </div>
   </li>
 </ul>
