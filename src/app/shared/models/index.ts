@@ -5,3 +5,4 @@ export * from './tag.model';
 export * from './tags.model';
 export * from './team.model';
 export * from './user.model';
+export * from './actionStatus-types.model';
