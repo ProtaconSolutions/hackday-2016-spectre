@@ -24,6 +24,8 @@ export class NotesComponent implements OnInit, OnDestroy {
   public commentType: string;
   public retroStarted: boolean;
   public commentTypeKey: string;
+  public decisionTypeKey: string;
+  public experimentStatusKey: string;
 
   private uid: string;
   private openRetro: any;
@@ -77,17 +79,25 @@ export class NotesComponent implements OnInit, OnDestroy {
           equalTo: 'noteType',
         }
       });
+    this.commentTypes$.map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Comment'))
+      .subscribe(tag => {
+        this.commentTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
+      });
+    this.commentTypes$.map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Decision'))
+      .subscribe(tag => {
+        this.decisionTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
+      });
 
-    this.angularFire.database
+    let statusTypes = this.angularFire.database
       .list('tags', {
         query: {
           orderByChild: 'type',
-          equalTo: 'noteType',
+          equalTo: 'DecisionStatus',
         }
-      })
-      .map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Comment'))
+      });
+    statusTypes.map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Experiment'))
       .subscribe(tag => {
-        this.commentTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
+        this.experimentStatusKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
       });
   }
 
@@ -100,6 +110,13 @@ export class NotesComponent implements OnInit, OnDestroy {
     // 'Decisions' and 'Action Points' are allowed only when there is 'open' retrospective
     const commentType = this.commentType ? this.commentType : this.commentTypeKey;
 
+    let tags = parent ? [commentType] : [this.noteType];
+
+    if(commentType == this.decisionTypeKey)
+    {
+      tags.push(this.experimentStatusKey);
+    }
+
     // create entity
     const note = {
       parentNote: parent ? parent : '',
@@ -107,7 +124,7 @@ export class NotesComponent implements OnInit, OnDestroy {
       text: parent ? this.note2 : this.note,
       user: this.uid,
       retro: '',
-      tags: [parent ? commentType : this.noteType],
+      tags: tags,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
