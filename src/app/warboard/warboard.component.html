@@ -23,12 +23,14 @@
 
 <ul *ngIf="experimentDecisions$ | async; else loadingExperimentDecisions; let experimentDecisions">
   <li *ngFor="let decision of experimentDecisions">
-    <div class="collapsible-header">
+    <div class="collapsible-header action-button-container">
       {{ decision.text }}
 
       <small>{{ (decision.user$ | async)?.name }}</small>
-      <button (click)="acceptDecision(decision.$key, decision)">Accept</button>
-      <button (click)="rejectDecision(decision.$key, decision)">Reject</button>
+      <span class="action-buttons">
+        <button (click)="acceptDecision(decision.$key, decision)">Accept</button>
+        <button (click)="rejectDecision(decision.$key, decision)">Reject</button>
+      </span>
       <span class="tags badge"
       >Experiment</span>
     </div>
@@ -42,11 +44,13 @@
 
 <ul *ngIf="decisions$ | async; else loadingDecisions; let decisions">
   <li *ngFor="let decision of decisions">
-    <div class="collapsible-header">
+    <div class="collapsible-header action-button-container">
       {{ decision.text }}
 
       <small>{{ (decision.user$ | async)?.name }}</small>
-      <button (click)="rejectDecision(decision.$key, decision)">Reject</button>
+      <span class="action-buttons">
+        <button (click)="rejectDecision(decision.$key, decision)">Reject</button>
+      </span>
     </div>
   </li>
 </ul>

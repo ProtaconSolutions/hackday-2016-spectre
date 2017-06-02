@@ -22,6 +22,11 @@ a.disabled {
   opacity: .5;
 }
 
+.action-button-container:hover .action-buttons { display:inline-block; }
+.action-buttons {
+  display: none;
+}
+
 span.badge.new:after {
   content: "";
 }
