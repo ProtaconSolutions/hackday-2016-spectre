@@ -223,7 +223,7 @@ export class NotesService {
   }
 
   addActionPointStatusDone(teamKey: string, actionPointKey: string, actionPoint: Note) {
-    actionPoint.tags.push(this.actionStatusTypes['Done']);
+    actionPoint.tags.push(this.actionStatusTypes.Done);
 
     this.angularFire.database.object(`/notes/${teamKey}/${actionPointKey}/tags`).update(actionPoint.tags);
   }
