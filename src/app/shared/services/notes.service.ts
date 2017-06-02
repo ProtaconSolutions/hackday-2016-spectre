@@ -55,15 +55,14 @@ export class NotesService {
               this.gladId = tag.$key;
               break;
           }
-
-          this.tags = {
-            Mad: this.madId,
-            Sad: this.sadId,
-            Glad: this.gladId
-          };
-
-          this.tags$.next(this.tags);
         });
+
+        this.noteTypes = {
+          ActionPoint: this.actionPointId,
+          Decision: this.decisionId,
+        };
+
+        this.noteTypes$.next(this.noteTypes);
       });
 
     this.angularFire.database
@@ -84,14 +83,14 @@ export class NotesService {
               break;
 
           }
-
-          this.noteTypes = {
-            ActionPoint: this.actionPointId,
-            Decision: this.decisionId,
-          };
-
-          this.noteTypes$.next(this.noteTypes);
         });
+
+        this.noteTypes = {
+          ActionPoint: this.actionPointId,
+          Decision: this.decisionId,
+        };
+
+        this.noteTypes$.next(this.noteTypes);
       });
 
     this.angularFire.database
@@ -108,11 +107,11 @@ export class NotesService {
               this.doneId = tag.$key;
               break;
           }
-
-          this.actionStatusTypes = {
-            Done: this.doneId,
-          };
         });
+
+        this.actionStatusTypes = {
+          Done: this.doneId,
+        };
       });
 
     this.angularFire.database
@@ -135,15 +134,15 @@ export class NotesService {
               this.rejectedStatusId = tag.$key;
               break;
           }
-
-          this.statuses = {
-            Experiment: this.experimentStatusId,
-            Valid: this.validStatusId,
-            Rejected: this.rejectedStatusId
-          };
-
-          this.statuses$.next(this.statuses);
         });
+
+        this.statuses = {
+          Experiment: this.experimentStatusId,
+          Valid: this.validStatusId,
+          Rejected: this.rejectedStatusId
+        };
+
+        this.statuses$.next(this.statuses);
       });
   }
 
