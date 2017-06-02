@@ -7,7 +7,7 @@ import {DecisionStatuses} from '../models/decision-statuses.model';
 
 @Injectable()
 export class NotesService {
-  public tags$: ReplaySubject<Tags> = new ReplaySubject(1);
+  public tags$: ReplaySubject<boolean> = new ReplaySubject(1);
   public noteTypes$: ReplaySubject<NoteTypes> = new ReplaySubject(1);
   public statuses$: ReplaySubject<DecisionStatuses> = new ReplaySubject(1);
 
@@ -31,9 +31,8 @@ export class NotesService {
    * @param {AngularFire} angularFire
    */
   constructor (private angularFire: AngularFire) {
-    if (!this.tags) { // Ensure that we have 'something' in replay subject
-      this.tags$.next(new Tags);
-    }
+
+    this.tags$.next(false);
 
     this.angularFire.database
       .list('tags', {
@@ -57,12 +56,13 @@ export class NotesService {
           }
         });
 
-        this.noteTypes = {
-          ActionPoint: this.actionPointId,
-          Decision: this.decisionId,
+        this.tags = {
+          Mad: this.madId,
+          Sad: this.sadId,
+          Glad: this.gladId
         };
 
-        this.noteTypes$.next(this.noteTypes);
+        this.tags$.next(true);
       });
 
     this.angularFire.database
