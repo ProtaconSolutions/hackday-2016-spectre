@@ -6,10 +6,13 @@
 
 <ul *ngIf="actionPoints$ | async; else loadingActionPoints; let actionPoints">
   <li *ngFor="let actionPoint of actionPoints">
-    <div class="collapsible-header">
+    <div class="collapsible-header action-button-container">
       {{ actionPoint.text }}
 
       <small>{{ (actionPoint.user$ | async)?.name }}</small>
+      <span class="action-buttons">
+          <button (click)="markActionPointDone(actionPoint.$key, actionPoint)">Done!</button>
+      </span>
     </div>
   </li>
 </ul>

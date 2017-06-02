@@ -58,4 +58,8 @@ export class WarboardComponent implements OnInit {
   public rejectDecision(noteKey: string, decision: Note) {
     this.notesService.changeDecisionStatus(this.teamKey, noteKey, decision, 'Rejected');
   }
+
+  public markActionPointDone(actionPointKey: string, actionPoint: Note) {
+    this.notesService.addActionPointStatusDone(this.teamKey, actionPointKey, actionPoint);
+  }
 }
