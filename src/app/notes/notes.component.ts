@@ -88,7 +88,7 @@ export class NotesComponent implements OnInit, OnDestroy {
         this.decisionTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
       });
 
-    let statusTypes = this.angularFire.database
+    const statusTypes = this.angularFire.database
       .list('tags', {
         query: {
           orderByChild: 'type',
@@ -110,10 +110,9 @@ export class NotesComponent implements OnInit, OnDestroy {
     // 'Decisions' and 'Action Points' are allowed only when there is 'open' retrospective
     const commentType = this.commentType ? this.commentType : this.commentTypeKey;
 
-    let tags = parent ? [commentType] : [this.noteType];
+    const tags = parent ? [commentType] : [this.noteType];
 
-    if(commentType == this.decisionTypeKey)
-    {
+    if (commentType === this.decisionTypeKey) {
       tags.push(this.experimentStatusKey);
     }
 
