@@ -57,10 +57,12 @@
                   <small>{{(_note.user$ | async)?.name}}</small>
                 </div>
 
-                <span class="tags badge"
-                  *ngFor="let tag of _note.tags$ | async"
-                  [ngClass]="(tag | async)?.name"
-                >{{(tag | async)?.name}}</span>
+                <div fxLayout="row" fxLayoutAlign="space-between center">
+                  <span class="tags badge"
+                    *ngFor="let tag of _note.tags$ | async"
+                    [ngClass]="(tag | async)?.name"
+                  >{{(tag | async)?.name}}</span>
+                </div>
               </div>
             </li>
           </ul>
