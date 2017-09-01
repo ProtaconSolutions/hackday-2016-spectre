@@ -34,116 +34,112 @@ export class NotesService {
 
     this.tags$.next(false);
 
+    // Get all tags with single database call instead of n calls to get the different types separately.
     this.angularFire.database
       .list('tags', {
         query: {
           orderByChild: 'type',
-          equalTo: 'MadSadGlad',
         }
       })
       .subscribe((tags: Array<Tag>) => {
-        tags.forEach(tag => {
-          switch (tag.name) {
-            case 'Mad':
-              this.madId = tag.$key;
-              break;
-            case 'Sad':
-              this.sadId = tag.$key;
-              break;
-            case 'Glad':
-              this.gladId = tag.$key;
-              break;
-          }
-        });
+        // Filter so that only those object that have type property are left
+        const verifiedTags = tags.filter(tag => tag.hasOwnProperty('type'));
 
-        this.tags = {
-          Mad: this.madId,
-          Sad: this.sadId,
-          Glad: this.gladId
-        };
-
-        this.tags$.next(true);
+        this.initializeMadSadGladTags(verifiedTags);
+        this.initializeNoteTypesTags(verifiedTags);
+        this.initializeActionStatusTags(verifiedTags);
+        this.initializeDecisionStatusTags(verifiedTags);
       });
+  }
 
-    this.angularFire.database
-      .list('tags', {
-        query: {
-          orderByChild: 'type',
-          equalTo: 'noteType',
-        }
-      })
-      .subscribe((tags: Array<Tag>) => {
-        tags.forEach(tag => {
-          switch (tag.name) {
-            case 'Action Point':
-              this.actionPointId = tag.$key;
-              break;
-            case 'Decision':
-              this.decisionId = tag.$key;
-              break;
+  private initializeMadSadGladTags(verifiedTags: Tag[]) {
+    const madSadGladTags = verifiedTags.filter(tag => tag.type === 'MadSadGlad');
 
-          }
-        });
+    madSadGladTags.forEach(tag => {
+      switch (tag.name) {
+        case 'Mad':
+          this.madId = tag.$key;
+          break;
+        case 'Sad':
+          this.sadId = tag.$key;
+          break;
+        case 'Glad':
+          this.gladId = tag.$key;
+          break;
+      }
+    });
 
-        this.noteTypes = {
-          ActionPoint: this.actionPointId,
-          Decision: this.decisionId,
-        };
+    this.tags = {
+      Mad: this.madId,
+      Sad: this.sadId,
+      Glad: this.gladId
+    };
 
-        this.noteTypes$.next(this.noteTypes);
-      });
+    this.tags$.next(true);
+  }
 
-    this.angularFire.database
-      .list('tags', {
-        query: {
-          orderByChild: 'type',
-          equalTo: 'actionStatus',
-        }
-      })
-      .subscribe((tags: Array<Tag>) => {
-        tags.forEach(tag => {
-          switch (tag.name) {
-            case 'Done':
-              this.doneId = tag.$key;
-              break;
-          }
-        });
+  private initializeNoteTypesTags(verifiedTags: Tag[]) {
+    const noteTypesTags = verifiedTags.filter(tag => tag.type === 'noteType');
 
-        this.actionStatusTypes = {
-          Done: this.doneId,
-        };
-      });
+    noteTypesTags.forEach(tag => {
+      switch (tag.name) {
+        case 'Action Point':
+          this.actionPointId = tag.$key;
+          break;
+        case 'Decision':
+          this.decisionId = tag.$key;
+          break;
+      }
+    });
 
-    this.angularFire.database
-      .list('tags', {
-        query: {
-          orderByChild: 'type',
-          equalTo: 'DecisionStatus',
-        }
-      })
-      .subscribe((tags: Array<Tag>) => {
-        tags.forEach(tag => {
-          switch (tag.name) {
-            case 'Experiment':
-              this.experimentStatusId = tag.$key;
-              break;
-            case 'Valid':
-              this.validStatusId = tag.$key;
-              break;
-            case 'Rejected':
-              this.rejectedStatusId = tag.$key;
-              break;
-          }
-        });
+    this.noteTypes = {
+      ActionPoint: this.actionPointId,
+      Decision: this.decisionId,
+    };
 
-        this.statuses = {
-          Experiment: this.experimentStatusId,
-          Valid: this.validStatusId,
-          Rejected: this.rejectedStatusId
-        };
+    this.noteTypes$.next(this.noteTypes);
+  }
 
-        this.statuses$.next(this.statuses);
-      });
+  private initializeActionStatusTags(verifiedTags: Tag[]) {
+    const actionStatusTags = verifiedTags.filter(tag => tag.type === 'actionStatus');
+
+    actionStatusTags.forEach(tag => {
+      switch (tag.name) {
+        case 'Done':
+          this.doneId = tag.$key;
+          break;
+      }
+    });
+
+    this.actionStatusTypes = {
+      Done: this.doneId,
+    };
+  }
+
+  private initializeDecisionStatusTags(verifiedTags: Tag[]) {
+    const decisionStatusTags = verifiedTags.filter(tag => tag.type === 'DecisionStatus');
+
+    decisionStatusTags.forEach(tag => {
+      switch (tag.name) {
+        case 'Experiment':
+          this.experimentStatusId = tag.$key;
+          break;
+        case 'Valid':
+          this.validStatusId = tag.$key;
+          break;
+        case 'Rejected':
+          this.rejectedStatusId = tag.$key;
+          break;
+      }
+    });
+
+    this.statuses = {
+      Experiment: this.experimentStatusId,
+      Valid: this.validStatusId,
+      Rejected: this.rejectedStatusId
+    };
+
+    this.statuses$.next(this.statuses);
   }
 
   /**
@@ -188,8 +184,7 @@ export class NotesService {
   }
 
   public changeDecisionStatus(teamKey: string, noteKey: string, existingDecision: Note, status: string) {
-
-    let decision = {
+    const decision = {
       text: existingDecision.text,
       parentNote: existingDecision.parentNote,
       retro: existingDecision.retro,
