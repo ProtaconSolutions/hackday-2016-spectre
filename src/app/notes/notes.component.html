@@ -74,6 +74,12 @@
               [(ngModel)]="note2"
               #note2Control
             />
+            <div *ngIf="commentType == actionPointTypeKey">
+              Assign action point to:
+              <select [(ngModel)]="assignee" name="assignee" style="display: block">
+                <option *ngFor="let user of users$ | async" value="{{user.$key}}">{{user.name}}</option>
+              </select>
+            </div>
 
             <button type="submit"
               [disabled]="note2Form.invalid"

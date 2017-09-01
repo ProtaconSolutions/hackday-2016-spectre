@@ -5,7 +5,7 @@ import * as firebase from 'firebase';
 import { Observable } from 'rxjs/Observable';
 
 import { TeamService } from '../shared/services/team.service';
-import { Note, Tag, Team } from '../shared/models/';
+import { Note, Tag, Team, User } from '../shared/models/';
 
 @Component({
   selector: 'app-notes',
@@ -17,6 +17,7 @@ export class NotesComponent implements OnInit, OnDestroy {
   public notes$: Observable<Array<Note>>;
   public noteTypes$: Observable<Array<Tag>>;
   public commentTypes$: Observable<Array<Tag>>;
+  public users$: Observable<Array<User>>;
   public retro$: any;
   public note: string;
   public note2: string;
@@ -25,7 +26,9 @@ export class NotesComponent implements OnInit, OnDestroy {
   public retroStarted: boolean;
   public commentTypeKey: string;
   public decisionTypeKey: string;
+  public actionPointTypeKey: string;
   public experimentStatusKey: string;
+  public assignee: string;
 
   private uid: string;
   private openRetro: any;
@@ -68,6 +71,8 @@ export class NotesComponent implements OnInit, OnDestroy {
         }
       });
 
+    this.users$ = this.angularFire.database.list('/users');
+
     /**
      * Note is 'first level' item and comments are sub-items of note
      * get comment types e.g. Comment / Decision / ActionPoint
@@ -78,6 +83,11 @@ export class NotesComponent implements OnInit, OnDestroy {
           orderByChild: 'type',
           equalTo: 'noteType',
         }
+      });
+
+    this.commentTypes$.map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Action Point'))
+      .subscribe(tag => {
+        this.actionPointTypeKey = (tag[0] && tag[0].hasOwnProperty('$key')) ? tag[0].$key : null;
       });
     this.commentTypes$.map((tags: Array<Tag>) => tags.filter((tag: Tag) => tag.hasOwnProperty('name') && tag.name === 'Comment'))
       .subscribe(tag => {
@@ -125,7 +135,8 @@ export class NotesComponent implements OnInit, OnDestroy {
       retro: '',
       tags: tags,
       createdAt: firebase.database.ServerValue.TIMESTAMP,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP
+      updatedAt: firebase.database.ServerValue.TIMESTAMP,
+      assignee: this.assignee
     };
 
     this.angularFire.database
