@@ -126,6 +126,10 @@ export class NotesComponent implements OnInit, OnDestroy {
       tags.push(this.experimentStatusKey);
     }
 
+    if(this.commentType !== this.actionPointTypeKey) {
+      this.assignee = "";
+    }
+
     // create entity
     const note = {
       parentNote: parent ? parent : '',
