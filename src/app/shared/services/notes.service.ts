@@ -152,7 +152,34 @@ export class NotesService {
   public getNotes(teamKey: string, type: string): Observable<Array<Note>> {
     return this.angularFire.database
       .list(`/notes/${teamKey}`)
-      .map(notes => notes.filter(note => note.hasOwnProperty('tags') && note.tags.includes(this.tags[type])));
+      .map(notes => {
+        notes = notes.map(note => {
+          note.user$ = this.angularFire.database.object(`/users/${note.user}`);
+
+          if (note.hasOwnProperty('tags') && note.tags.length > 0) {
+            note.tags$ = Observable.of(note.tags.map(tag => this.angularFire.database.object('/tags/' + tag)));
+          } else {
+            note.tags$ = Observable.of([]);
+          }
+
+          return note;
+        });
+
+        const copyOfResults = [...notes];
+
+        // re-organize notes so that list contains only notes (entities without parent)
+        // and add 'comments'(entities with parent) as sub-notes, then filter by the specified tag
+        return notes
+          .filter(note => {
+            return !(note.hasOwnProperty('parentNote') && note.parentNote !== '') &&
+              note.hasOwnProperty('tags') && note.tags.includes(this.tags[type]);
+          })
+          .map(note => {
+            note.notes = copyOfResults.filter(_note => _note.parentNote === note.$key);
+
+            return note;
+          });
+      });
   }
 
   /**

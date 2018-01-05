@@ -28,7 +28,43 @@
     <div class="collapsible-body">
       <strong>Mad</strong>
       <ul *ngIf="getNotes('Mad', retro) as notes">
-        <li *ngFor="let note of notes"> {{ note.text }}</li>
+        <li *ngFor="let note of notes">
+          <div class="note" fxLayout="row" fxLayoutAlign="space-between center">
+            <div fxLayout="row" fxLayoutAlign="start center">
+              <span>{{note.text}}</span>
+              <span fxFlex="8px"></span>
+              <small>{{(note.user$ | async)?.name}}</small>
+            </div>
+  
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+              <span class="tags badge"
+                *ngFor="let tag of note.tags$ | async"
+                [ngClass]="(tag | async)?.name"
+              >{{ (tag | async)?.name }}</span>
+            </div>
+          </div>
+
+          <div>
+            <ul>
+              <li *ngFor="let _note of note.notes">
+                <div class="note subnote" fxLayout="row" fxLayoutAlign="space-between center">
+                  <div fxLayout="row" fxLayoutAlign="start center">
+                    <span>{{_note.text}}</span>
+                    <span fxFlex="8px"></span>
+                    <small>{{(_note.user$ | async)?.name}}</small>
+                  </div>
+  
+                  <div fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class="tags badge"
+                      *ngFor="let tag of _note.tags$ | async"
+                      [ngClass]="(tag | async)?.name"
+                    >{{(tag | async)?.name}}</span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
 
         <li *ngIf="notes.length === 0">
           <em>none</em>
@@ -37,7 +73,43 @@
 
       <strong>Sad</strong>
       <ul *ngIf="getNotes('Sad', retro) as notes">
-        <li *ngFor="let note of notes"> {{ note.text }}</li>
+        <li *ngFor="let note of notes">
+          <div class="note" fxLayout="row" fxLayoutAlign="space-between center">
+              <div fxLayout="row" fxLayoutAlign="start center">
+                <span>{{note.text}}</span>
+                <span fxFlex="8px"></span>
+                <small>{{(note.user$ | async)?.name}}</small>
+              </div>
+    
+              <div fxLayout="row" fxLayoutAlign="space-between center">
+                <span class="tags badge"
+                  *ngFor="let tag of note.tags$ | async"
+                  [ngClass]="(tag | async)?.name"
+                >{{ (tag | async)?.name }}</span>
+              </div>
+            </div>
+  
+            <div>
+              <ul>
+                <li *ngFor="let _note of note.notes">
+                  <div class="note subnote" fxLayout="row" fxLayoutAlign="space-between center">
+                    <div fxLayout="row" fxLayoutAlign="start center">
+                      <span>{{_note.text}}</span>
+                      <span fxFlex="8px"></span>
+                      <small>{{(_note.user$ | async)?.name}}</small>
+                    </div>
+    
+                    <div fxLayout="row" fxLayoutAlign="space-between center">
+                      <span class="tags badge"
+                        *ngFor="let tag of _note.tags$ | async"
+                        [ngClass]="(tag | async)?.name"
+                      >{{(tag | async)?.name}}</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+        </li>
 
         <li *ngIf="notes.length === 0">
           <em>none</em>
@@ -46,7 +118,43 @@
 
       <strong>Glad</strong>
       <ul *ngIf="getNotes('Glad', retro) as notes">
-        <li *ngFor="let note of notes"> {{ note.text }}</li>
+        <li *ngFor="let note of notes">
+          <div class="note" fxLayout="row" fxLayoutAlign="space-between center">
+              <div fxLayout="row" fxLayoutAlign="start center">
+                <span>{{note.text}}</span>
+                <span fxFlex="8px"></span>
+                <small>{{(note.user$ | async)?.name}}</small>
+              </div>
+    
+              <div fxLayout="row" fxLayoutAlign="space-between center">
+                <span class="tags badge"
+                  *ngFor="let tag of note.tags$ | async"
+                  [ngClass]="(tag | async)?.name"
+                >{{ (tag | async)?.name }}</span>
+              </div>
+            </div>
+  
+            <div>
+              <ul>
+                <li *ngFor="let _note of note.notes">
+                  <div class="note subnote" fxLayout="row" fxLayoutAlign="space-between center">
+                    <div fxLayout="row" fxLayoutAlign="start center">
+                      <span>{{_note.text}}</span>
+                      <span fxFlex="8px"></span>
+                      <small>{{(_note.user$ | async)?.name}}</small>
+                    </div>
+    
+                    <div fxLayout="row" fxLayoutAlign="space-between center">
+                      <span class="tags badge"
+                        *ngFor="let tag of _note.tags$ | async"
+                        [ngClass]="(tag | async)?.name"
+                      >{{(tag | async)?.name}}</span>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+        </li>
 
         <li *ngIf="notes.length === 0">
           <em>none</em>
