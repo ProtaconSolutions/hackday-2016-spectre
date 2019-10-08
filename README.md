@@ -1,5 +1,5 @@
 # What is this?
-TODO
+Protacon Hackday 2016 project for help users with retrospective meetings.
  
 # Installation
 First of all you have to install npm and node.js to your box. Installation instructions can be found here.
