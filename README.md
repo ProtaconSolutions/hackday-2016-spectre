@@ -38,5 +38,4 @@ $ ng serve
  * Joose Alm
 
 # License
-The MIT License (MIT)
-Copyright (c) 2016 [Protacon Solutions](https://www.protacon.com)
+See [LICENSE](LICENSE)
